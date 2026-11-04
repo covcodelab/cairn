@@ -16,6 +16,7 @@ from cairn.models import (
     LIARLIRecord,
     ProcessingActivity,
     RegimeScope,
+    RLICondition,
     ScreeningOutcome,
 )
 from cairn.rules import Severity, evaluate
@@ -344,3 +345,39 @@ def test_rule12_fires_for_joint_without_basis(session, actor, frs_profile):
     )
     rule_ids = {f.rule_id for f in evaluate(activity, frs_profile)}
     assert "12" in rule_ids
+
+
+def _rli_record(session, basis, **overrides):
+    session.add(
+        LIARLIRecord(
+            lawful_basis_record_id=basis.id,
+            interest_identified="Recognised interest.",
+            necessity_test="Necessary for the purpose.",
+            decision=LIADecision.PROCEED,
+            decision_date=date(2026, 6, 1),
+            **overrides,
+        )
+    )
+    session.flush()
+
+
+def test_rule5_fires_for_ea_without_rli_record(session, actor, frs_profile):
+    activity = make_activity(session, actor)
+    make_basis(session, activity, art6_basis=art6(session, "ea"))
+    findings = evaluate(activity, frs_profile)
+    assert [f.rule_id for f in findings] == ["5"]
+    assert "recognised legitimate interest" in findings[0].message.lower()
+
+
+def test_rule5_fires_for_ea_when_condition_missing(session, actor, frs_profile):
+    activity = make_activity(session, actor)
+    basis = make_basis(session, activity, art6_basis=art6(session, "ea"))
+    _rli_record(session, basis)
+    assert [f.rule_id for f in evaluate(activity, frs_profile)] == ["5"]
+
+
+def test_rule5_clears_for_ea_with_condition(session, actor, frs_profile):
+    activity = make_activity(session, actor)
+    basis = make_basis(session, activity, art6_basis=art6(session, "ea"))
+    _rli_record(session, basis, rli_condition=RLICondition.EMERGENCIES)
+    assert evaluate(activity, frs_profile) == []

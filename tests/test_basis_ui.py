@@ -5,10 +5,12 @@ from cairn.models import (
     LawfulBasisRecord,
     LegalEntity,
     LegalEntityRoleType,
+    LIARLIRecord,
     OrganisationProfile,
     PersonalDataCategory,
     ProcessingActivity,
     RegimeScope,
+    RLICondition,
 )
 from cairn.rules import evaluate
 from conftest import art6, s35, schedule8
@@ -216,7 +218,7 @@ def test_consent_flow_appears_and_clears_rule6(activities_client, activities_web
     token = _basis_edit_token(activities_client, activity_id, "part2")
     activities_client.post(
         f"/activities/{activity_id}/basis/part2",
-        data={"csrf_token": token, "art6_basis_id": a_id},
+        data={"csrf_token": token, "art6_basis_id": a_id, "art6_justification": "Consent."},
     )
 
     detail = activities_client.get(f"/activities/{activity_id}")
@@ -258,7 +260,7 @@ def test_lia_flow_appears_and_clears_rule5(activities_client, activities_web_eng
     token = _basis_edit_token(activities_client, activity_id, "part2")
     activities_client.post(
         f"/activities/{activity_id}/basis/part2",
-        data={"csrf_token": token, "art6_basis_id": f_id},
+        data={"csrf_token": token, "art6_basis_id": f_id, "art6_justification": "Interest."},
     )
 
     detail = activities_client.get(f"/activities/{activity_id}")
@@ -327,3 +329,61 @@ def test_controllers_junction_only_for_processor_or_joint_and_clears_rule13(
     assert not any(
         f.rule_id == "13" for f in _findings_for(activities_web_engine, processor_activity_id)
     )
+
+
+def test_part2_blank_justification_rejected(activities_client, activities_web_engine):
+    activity_id = _create_activity(
+        activities_client, activities_web_engine, login_as="Cara Curator"
+    )
+    with Session(activities_web_engine) as db:
+        e_id = art6(db, "e").id
+    token = _basis_edit_token(activities_client, activity_id, "part2")
+    response = activities_client.post(
+        f"/activities/{activity_id}/basis/part2",
+        data={"csrf_token": token, "art6_basis_id": e_id, "art6_justification": "  "},
+    )
+    assert response.status_code == 422
+    assert "Enter the justification for the Art 6 basis" in response.text
+
+
+def test_part3_does_not_require_justification(activities_client, activities_web_engine):
+    activity_id = _create_activity(
+        activities_client, activities_web_engine, login_as="Cara Curator"
+    )
+    with Session(activities_web_engine) as db:
+        s35_id = s35(db, "s35_task").id
+    token = _basis_edit_token(activities_client, activity_id, "part3")
+    response = activities_client.post(
+        f"/activities/{activity_id}/basis/part3",
+        data={"csrf_token": token, "s35_basis_id": s35_id},
+    )
+    assert response.status_code == 302
+
+
+def test_lia_form_records_rli_condition(activities_client, activities_web_engine):
+    activity_id = _create_activity(
+        activities_client, activities_web_engine, login_as="Cara Curator"
+    )
+    with Session(activities_web_engine) as db:
+        ea_id = art6(db, "ea").id
+    token = _basis_edit_token(activities_client, activity_id, "part2")
+    activities_client.post(
+        f"/activities/{activity_id}/basis/part2",
+        data={"csrf_token": token, "art6_basis_id": ea_id, "art6_justification": "Emergency."},
+    )
+    form = activities_client.get(f"/activities/{activity_id}/basis/part2/lia/new")
+    assert "Emergencies" in form.text
+    response = activities_client.post(
+        f"/activities/{activity_id}/basis/part2/lia/new",
+        data={
+            "csrf_token": _extract_csrf(form.text),
+            "interest_identified": "Responding to an emergency.",
+            "necessity_test": "Necessary.",
+            "rli_condition": "emergencies",
+            "decision": "proceed",
+            "decision_date": "2026-06-01",
+        },
+    )
+    assert response.status_code == 302
+    with Session(activities_web_engine) as db:
+        assert db.scalars(select(LIARLIRecord)).one().rli_condition == RLICondition.EMERGENCIES

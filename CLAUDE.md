@@ -66,7 +66,7 @@ Every entity implicitly carries `id`, `created_at/updated_at`, `created_by/updat
 
 - The overall delivery roadmap is the project plan's phases 0–6. Application build order lives in Phase 2, sub-phases 2a–2f (Project Plan §5), which track Plan §6 (2a–2e ≈ Plan stages 1a–1e; 2f ≈ Plan stage 2, DUAA alignment). Sub-phase 2a builds the core + routers + config seams and populates the FRS pack.
 - Legal accuracy matters: the vocabularies (Schedule 1/8 conditions, lawful bases) are seeded from specific legislation. Verify against the latest *revised* legislation for DUAA amendments before seeding (Spec §11).
-- Terminology watch-item: "ICO" is being reconstituted as the "Information Commission" under DUAA Part 6 — export labels will eventually change.
+- Terminology: the Information Commission replaced the ICO on 30 Sept 2026 (SI 2026/1015); user-facing labels now say "Information Commission". The `ico_escalation_flagged` column and internal `ico` names are unchanged.
 - Dev loop: `uv run pytest -q` and `uv run ruff check .` are the CI gates; `uv run alembic upgrade head` builds the dev DB (`docs/admin-reference.md` §1 covers start/stop/reset).
 - Making a vocabulary proposable is three coupled edits: `ProposableMixin` on the model, a migration adding `entry_status` (`server_default='APPROVED'`), and `accepts_proposals=True` on its `VocabSpec` — miss the last and proposals are created but never surface for approval.
 - Migrations branch from `uv run alembic heads`; the `entrystatus` enum is shared across tables, so a column-adding migration's downgrade drops **the column only**, never the enum type (template: `90c4514cc969`).

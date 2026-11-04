@@ -57,6 +57,9 @@ def _new_values() -> dict:
         "response_due": "",
         "responded_at": "",
         "outcome": "",
+        "outcome_communicated_at": "",
+        "enquiries_note": "",
+        "progress_updates": "",
         "ico_escalation_flagged": False,
     }
 
@@ -71,6 +74,11 @@ def _to_values(target: ComplaintRecord) -> dict:
         "response_due": target.response_due.isoformat(),
         "responded_at": target.responded_at.date().isoformat() if target.responded_at else "",
         "outcome": target.outcome.value if target.outcome else "",
+        "outcome_communicated_at": target.outcome_communicated_at.date().isoformat()
+        if target.outcome_communicated_at
+        else "",
+        "enquiries_note": target.enquiries_note or "",
+        "progress_updates": target.progress_updates or "",
         "ico_escalation_flagged": target.ico_escalation_flagged,
     }
 
@@ -83,6 +91,9 @@ def _parse_form(form) -> dict:
         "response_due": form.get("response_due", "").strip(),
         "responded_at": form.get("responded_at", "").strip(),
         "outcome": form.get("outcome", ""),
+        "outcome_communicated_at": form.get("outcome_communicated_at", "").strip(),
+        "enquiries_note": form.get("enquiries_note", "").strip(),
+        "progress_updates": form.get("progress_updates", "").strip(),
         "ico_escalation_flagged": form.get("ico_escalation_flagged") is not None,
     }
 
@@ -104,7 +115,7 @@ def _validate(session: Session, values: dict) -> list[dict]:
     elif not _valid_date(values["received_at"]):
         errors.append({"field": "received_at", "message": "Enter a valid date"})
 
-    for field in ("acknowledged_at", "response_due", "responded_at"):
+    for field in ("acknowledged_at", "response_due", "responded_at", "outcome_communicated_at"):
         if values[field] and not _valid_date(values[field]):
             errors.append({"field": field, "message": "Enter a valid date"})
 
@@ -134,6 +145,14 @@ def _validate(session: Session, values: dict) -> list[dict]:
     if values["outcome"] and not values["responded_at"]:
         errors.append({"field": "responded_at", "message": "Enter the date the response was sent"})
 
+    if values["outcome"] and not values["outcome_communicated_at"]:
+        errors.append(
+            {
+                "field": "outcome_communicated_at",
+                "message": "Enter the date the outcome was communicated to the complainant",
+            }
+        )
+
     if values["activity_id"] and session.get(ProcessingActivity, values["activity_id"]) is None:
         errors.append({"field": "activity_id", "message": "Select a valid activity"})
 
@@ -160,6 +179,13 @@ def _apply(target: ComplaintRecord, values: dict) -> None:
         else None
     )
     target.outcome = ComplaintOutcome(values["outcome"]) if values["outcome"] else None
+    target.outcome_communicated_at = (
+        datetime.combine(date.fromisoformat(values["outcome_communicated_at"]), time.min)
+        if values["outcome_communicated_at"]
+        else None
+    )
+    target.enquiries_note = values["enquiries_note"] or None
+    target.progress_updates = values["progress_updates"] or None
     target.ico_escalation_flagged = values["ico_escalation_flagged"]
 
 

@@ -79,7 +79,7 @@ def _active_basis_art6_f(activity: ProcessingActivity) -> bool:
         basis is not None
         and basis.regime_scope == RegimeScope.PART2
         and basis.art6_basis is not None
-        and basis.art6_basis.code == "f"
+        and basis.art6_basis.code in ("f", "ea")
     )
 
 
@@ -196,6 +196,13 @@ def _schedule1_and_apd_present(activity: ProcessingActivity) -> str | None:
 
 def _lia_balancing_test_present(activity: ProcessingActivity) -> str | None:
     basis = active_basis(activity)
+    if basis.art6_basis.code == "ea":
+        if not any(r.rli_condition for r in basis.lia_rli_records):
+            return (
+                "Art 6(ea) recognised legitimate interest requires an LIA/RLI record "
+                "identifying the Annex 1 recognised interest relied on"
+            )
+        return None
     if not any(r.balancing_test for r in basis.lia_rli_records):
         return (
             "Art 6(f) legitimate interests requires an LIA/RLI record with a completed "
@@ -417,7 +424,8 @@ RULES: list[Rule] = [
     ),
     Rule(
         id="5",
-        description="Art 6(f) legitimate interests needs a completed LIA/RLI balancing test",
+        description="Art 6(f) legitimate interests needs a completed LIA/RLI balancing test; "
+        "Art 6(ea) recognised legitimate interest needs the Annex 1 condition recorded",
         severity=Severity.BLOCK,
         trigger="active_basis_art6_f",
         requirement="lia_balancing_test_present",
@@ -508,7 +516,7 @@ RULES: list[Rule] = [
     Rule(
         id="20",
         description="Online children's services must evidence the higher-protection matters "
-        "(spec clarification pending final ICO guidance)",
+        "(spec clarification pending final Information Commission guidance)",
         severity=Severity.WARN,
         trigger="online_childrens_service",
         requirement="childrens_service_protections",
@@ -516,7 +524,7 @@ RULES: list[Rule] = [
     Rule(
         id="21",
         description="Further processing needs a compatibility assessment "
-        "(spec clarification pending final ICO guidance)",
+        "(spec clarification pending final Information Commission guidance)",
         severity=Severity.WARN,
         trigger="is_further_processing",
         requirement="further_processing_note_present",

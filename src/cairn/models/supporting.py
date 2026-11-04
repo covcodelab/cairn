@@ -15,6 +15,7 @@ from cairn.models.enums import (
     LIADecision,
     RegimeScope,
     ResidualRisk,
+    RLICondition,
     ScreeningOutcome,
     SubProcessorAuthorisation,
     WithdrawalStatus,
@@ -98,6 +99,7 @@ class LIARLIRecord(AuditedBase):
 
     lawful_basis_record_id: Mapped[str] = mapped_column(ForeignKey("lawful_basis_record.id"))
     interest_identified: Mapped[str] = mapped_column(Text)
+    rli_condition: Mapped[RLICondition | None]
     necessity_test: Mapped[str] = mapped_column(Text)
     balancing_test: Mapped[str | None] = mapped_column(Text)
     safeguards: Mapped[str | None] = mapped_column(Text)
@@ -193,6 +195,9 @@ class ComplaintRecord(AuditedBase):
     responded_at: Mapped[datetime | None]
     outcome: Mapped[ComplaintOutcome | None]
     ico_escalation_flagged: Mapped[bool] = mapped_column(default=False)
+    enquiries_note: Mapped[str | None] = mapped_column(Text)
+    progress_updates: Mapped[str | None] = mapped_column(Text)
+    outcome_communicated_at: Mapped[datetime | None]
 
 
 adm_datasource = Table(

@@ -26,6 +26,8 @@ Test suite 294 passing; CI green throughout. **Remaining work before go-live is 
 
 **Addendum (2026-07-31):** **asset supplier names now become approvable reference data** (PRs #31–#32), found in use — the wizard's "which company?" answer and the CSV import's `supplier` column matched against existing Legal Entity labels and discarded anything unmatched, so the asset was saved with no supplier at all. `LegalEntity` is now proposable (migration `babc0f3203da`); an unmatched name creates a proposed entity (role type `processor`), links it, and queues it for approval, from both routes. **Rule 24** closes the converse hole — the asset-side analogue of rule 18, blocking approval while an asset's supplier or security measure is unapproved, with the CSV import creating such rows as `proposed` rather than approved so it cannot bypass the gate. The `AS-D2_NAME` gap self-resolves when the proposed entity is approved. Suite 447 passing. Two knock-ons to watch in P4: a first bulk load full of new security-measure names will now land its assets in the approval queue rather than straight on the register (approve the measures first, then import), and de-duplicating by pointing an asset at an existing entity and rejecting the proposal still leaves its gap to be resolved by hand.
 
+**Addendum (2026-11-04):** **Information Commission and lawful-basis evidence** — SI 2026/1015 commenced the Information Commission on 30 Sep 2026, so user-facing "ICO" wording is now "Information Commission" (complaints form/list, DPIA hint and tag, FRS recipient seed, rule text; the `ico_escalation_flagged` column is unchanged) and the dashboard commencement card merges the statutory defaults (incl. `information_commission`) with the stored profile. Complaints gain s164A evidence fields (`enquiries_note`, `progress_updates`, `outcome_communicated_at`, required once an outcome is set; migration `5c1e7a2d9b04`); Part 2 basis records now require `art6_justification` when an Art 6 basis is set; LIA/RLI records gain `rli_condition` over the five Annex 1 interests (migration `7d3f0b8e6a15`) and rule 5 now also BLOCKs an (ea) basis without one (rule 4 stays a WARN). Existing installs keep the old recipient label (no data migration; vocabulary is editable). Test suite 457 passing.
+
 ## 2. Gaps to close before or during staging *(ordered by risk)*
 
 1. ~~**Session lifetime not enforced.**~~ **Done (2026-07-17):** idle timeout via rolling cookie `max_age` (`SESSION_IDLE_SECONDS`, default 60m); absolute lifetime via `auth_at` stamp checked in `current_user` (`SESSION_ABSOLUTE_SECONDS`, default 12h). Pre-existing sessions are invalidated on deploy (one-off re-login).
@@ -63,6 +65,12 @@ Test suite 294 passing; CI green throughout. **Remaining work before go-live is 
 26. ~~**No inline styles anywhere — CSP blocks them**~~ **Resolved (2026-07-30): `src/cairn/static/cairn.css` added.** The app sends `Content-Security-Policy: default-src 'self'` with no `style-src 'unsafe-inline'`, so a `style="…"` attribute reaches the DOM but computes to nothing — proven twice with `getComputedStyle`. Ten such attributes were in the tree (all `display:inline` on paired action forms across `base.html`, the imports previews, `users/list.html`, a contract section and the asset detail page), so approve/reject, confirm/cancel and deactivate/reactivate buttons had been stacking rather than sitting side by side. The CSP was **not** relaxed: a same-origin stylesheet is already allowed by `default-src 'self'`. `tests/test_web.py::test_no_template_uses_an_inline_style_attribute` fails the build if one reappears. Keep `cairn.css` small — a rule belongs there only when no `govuk-*` class does the job. **When checking whether a govuk-frontend class exists, search for the escaped form** — the minified CSS writes override classes as `.govuk-\!-width-two-thirds`, so grepping the literal `govuk-!-width-two-thirds` finds nothing and wrongly suggests the class is missing (that mistake was made and corrected here on 2026-07-30; the width overrides do exist).
 27. ~~**Intake-derived asset notes read as a run-on block.**~~ **Resolved (2026-07-30)** by `.cairn-preserve-lines` (item 26) on the textarea-backed rows of the asset detail summary list, so `notes` and `description` render their stored newlines. Partly pre-empted by 2i.3, whose "created from intake" panel already showed the submission's answers as their own rows.
 
+28. **Multiple Art 6 bases per activity.** ICO guidance is to document all bases that apply; Cairn holds one per activity per regime. Workaround today: split the activity.
+29. **Structured further-processing options for rule 21.** Replace the free-text compatibility note with the Annex 2 compatible-purpose route, the consent-origin reuse route and a compatibility assessment.
+30. **Rule 4 could also flag consent (a) for public authorities** for DPO review, alongside (f)/(ea).
+31. **Rights-by-basis view** (erasure / portability / objection) to feed privacy notices.
+32. **Re-check the ADM safeguards (rule 19)** when the final ADM/AI statutory code is published.
+
 ## 5. Standing assurance items (Phase 3, unchanged but restated)
 
 - **Penetration test** — now more urgent than when scoped: the attack surface grew (OIDC endpoints, intake forms).
@@ -80,7 +88,7 @@ Test suite 294 passing; CI green throughout. **Remaining work before go-live is 
 | At first staging deployment | 5 Entra round-trip verification *(2 done 2026-07-17)* |
 | During pilot (as evidence arrives) | 8–14 |
 | Before go-live | Phase 3 items (§5) · 15 notifications |
-| Post go-live / roadmap | 16–24 *(26, 27 done 2026-07-30)* |
+| Post go-live / roadmap | 16–24, 28–32 *(26, 27 done 2026-07-30)* |
 
 ---
 

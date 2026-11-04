@@ -81,7 +81,7 @@ RECIPIENTS = [
     ("other fire & rescue services", RecipientType.PUBLIC_BODY),
     ("coroner", RecipientType.PUBLIC_BODY),
     ("courts & tribunals", RecipientType.PUBLIC_BODY),
-    ("ICO (Information Commission)", RecipientType.PUBLIC_BODY),
+    ("Information Commission", RecipientType.PUBLIC_BODY),
     ("Home Office / central government", RecipientType.PUBLIC_BODY),
     ("National Fire Chiefs Council", RecipientType.OTHER),
     ("insurers", RecipientType.OTHER),

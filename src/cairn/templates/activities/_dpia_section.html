@@ -24,7 +24,7 @@
       <td class="govuk-table__cell">{{ screening_outcome_labels[row.dpia.screening_outcome] }}</td>
       <td class="govuk-table__cell">
         {{ residual_risk_labels.get(row.dpia.residual_risk, "") }}
-        {% if row.dpia.residual_risk and row.dpia.residual_risk.value == "high" %}<strong class="govuk-tag govuk-tag--red">Consult ICO</strong>{% endif %}
+        {% if row.dpia.residual_risk and row.dpia.residual_risk.value == "high" %}<strong class="govuk-tag govuk-tag--red">Consult Information Commission</strong>{% endif %}
       </td>
       <td class="govuk-table__cell">{{ row.sign_off_label }}</td>
       <td class="govuk-table__cell">{{ row.dpia.review_date or "" }}</td>

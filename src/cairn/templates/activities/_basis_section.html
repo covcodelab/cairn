@@ -78,7 +78,7 @@
   <tbody class="govuk-table__body">
     {% for lia in lia_records %}
     <tr class="govuk-table__row">
-      <td class="govuk-table__cell">{{ lia.interest_identified }}</td>
+      <td class="govuk-table__cell">{{ lia.interest_identified }}{% if lia.rli_condition %}<br><span class="govuk-hint">{{ rli_condition_labels[lia.rli_condition] }}</span>{% endif %}</td>
       <td class="govuk-table__cell">{{ "Yes" if lia.balancing_test else "No" }}</td>
       <td class="govuk-table__cell">{{ lia_decision_labels[lia.decision] }}</td>
       <td class="govuk-table__cell">{{ lia.decision_date }}</td>

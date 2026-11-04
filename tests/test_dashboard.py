@@ -255,13 +255,14 @@ def test_dashboard_asset_kpi_excludes_proposed_supplier(
     assert '/assets?contains_personal_data=true">1</a>' in response.text
 
 
-def test_dashboard_no_commencement_watch_card_without_data(
+def test_dashboard_commencement_watch_card_shows_statutory_defaults_without_stored_data(
     activities_client, activities_web_engine
 ):
     _login(activities_client, activities_web_engine, "Ada Approver")
     response = activities_client.get("/")
     assert response.status_code == 200
-    assert "DUAA commencement" not in response.text
+    assert "DUAA commencement" in response.text
+    assert "in force since 2026-09-30" in response.text
 
 
 def test_dashboard_commencement_watch_card(activities_client, activities_web_engine):
@@ -478,3 +479,19 @@ def test_dashboard_no_longer_offers_csv_downloads(
     assert "Download CSV" not in response.text
     assert "Art 30(1)" in response.text
     assert 'href="/register"' in response.text
+
+
+def test_dashboard_commencement_merges_statutory_defaults(
+    activities_client, activities_web_engine
+):
+    approver_id = _user_id(activities_web_engine, "Ada Approver")
+    with Session(activities_web_engine) as db:
+        db.info["actor_id"] = approver_id
+        profile = db.scalars(select(OrganisationProfile)).one()
+        profile.commencement_watch = {"duaa_principal": "2026-02-05"}
+        db.commit()
+
+    _login(activities_client, activities_web_engine, "Ada Approver")
+    response = activities_client.get("/")
+    assert "Information Commission replaces the ICO" in response.text
+    assert "in force since 2026-09-30" in response.text

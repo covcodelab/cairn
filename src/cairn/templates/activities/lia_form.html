@@ -10,6 +10,8 @@
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
   {{ textarea("interest_identified", "Interest identified", values.interest_identified, error=error_map.get("interest_identified")) }}
+  {{ select("rli_condition", "Recognised interest (Annex 1)", rli_options, selected=values.rli_condition, hint="Required for (ea) recognised legitimate interest: the Annex 1 purpose relied on") }}
+  {% if error_map.get("rli_condition") %}<p class="govuk-error-message">{{ error_map.get("rli_condition") }}</p>{% endif %}
   {{ textarea("necessity_test", "Necessity test", values.necessity_test, error=error_map.get("necessity_test")) }}
   {{ textarea("balancing_test", "Balancing test", values.balancing_test, hint="Required for (f) legitimate interests; not required for (ea) recognised legitimate interests") }}
   {{ textarea("safeguards", "Safeguards", values.safeguards) }}

@@ -149,7 +149,7 @@ def test_dpia_round_trip_clears_rule7_and_sign_off_limited_to_approver(
     assert not _has_rule(activities_web_engine, activity_id, "7")
 
     detail_after = activities_client.get(f"/activities/{activity_id}")
-    assert "Consult ICO" in detail_after.text
+    assert "Consult Information Commission" in detail_after.text
 
 
 def test_dpia_author_forbidden_for_contributor(activities_client, activities_web_engine):

@@ -201,6 +201,14 @@ class LIADecision(StrEnum):
     DO_NOT_PROCEED = "do_not_proceed"
 
 
+class RLICondition(StrEnum):
+    NATIONAL_SECURITY_DEFENCE = "national_security_defence"
+    EMERGENCIES = "emergencies"
+    CRIME = "crime"
+    SAFEGUARDING_VULNERABLE = "safeguarding_vulnerable"
+    PUBLIC_INTEREST_DISCLOSURE_REQUEST = "public_interest_disclosure_request"
+
+
 class EntryStatus(StrEnum):
     PROPOSED = "proposed"
     APPROVED = "approved"

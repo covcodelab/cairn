@@ -19,7 +19,8 @@
       <th scope="col" class="govuk-table__header">Response due</th>
       <th scope="col" class="govuk-table__header">Status</th>
       <th scope="col" class="govuk-table__header">Outcome</th>
-      <th scope="col" class="govuk-table__header">ICO route</th>
+      <th scope="col" class="govuk-table__header">Outcome communicated</th>
+      <th scope="col" class="govuk-table__header">Information Commission route</th>
       <th scope="col" class="govuk-table__header">Actions</th>
     </tr>
   </thead>
@@ -38,6 +39,7 @@
       <td class="govuk-table__cell">{{ row.complaint.response_due }}</td>
       <td class="govuk-table__cell"><strong class="govuk-tag govuk-tag--{{ row.status_colour }}">{{ row.status_label }}</strong></td>
       <td class="govuk-table__cell">{{ row.outcome_label }}</td>
+      <td class="govuk-table__cell">{{ row.complaint.outcome_communicated_at.date() if row.complaint.outcome_communicated_at else "—" }}</td>
       <td class="govuk-table__cell">{% if row.complaint.ico_escalation_flagged %}<strong class="govuk-tag govuk-tag--blue">Yes</strong>{% else %}—{% endif %}</td>
       <td class="govuk-table__cell">
         <a class="govuk-link" href="/complaints/{{ row.complaint.id }}/edit">Edit</a>
@@ -45,7 +47,7 @@
     </tr>
     {% else %}
     <tr class="govuk-table__row">
-      <td class="govuk-table__cell" colspan="8">No complaints.</td>
+      <td class="govuk-table__cell" colspan="9">No complaints.</td>
     </tr>
     {% endfor %}
   </tbody>
