@@ -16,45 +16,46 @@
   </p>
   {% endif %}
 
-  {{ text_input("name", "Name", values.name, error=error_map.get("name")) }}
-  {{ text_input("reference", "Reference", values.reference) }}
-  {{ select("business_function_id", "Business function", business_function_options, selected=values.business_function_id) }}
-  {{ textarea("description", "Description", values.description) }}
-  {{ select("activity_type", "Activity type", activity_type_options, selected=values.activity_type) }}
-  {{ select("activity_domain", "Activity domain", activity_domain_options, selected=values.activity_domain) }}
-  {{ select("controller_or_processor", "Controller or processor", controller_or_processor_options, selected=values.controller_or_processor) }}
-  {{ select("lifecycle_stage", "Lifecycle stage", lifecycle_stage_options, selected=values.lifecycle_stage, hint=("Only the DPO/approver may move a trial to live." if trial_hint else None)) }}
+  {{ text_input("name", "Name", values.name, hint="A short name people will recognise, for example 'Home fire safety visits'", error=error_map.get("name")) }}
+  {{ text_input("reference", "Reference", values.reference, hint="Your own reference number, if you use one") }}
+  {{ select("business_function_id", "Business function", business_function_options, selected=values.business_function_id, hint="The team that carries out this activity") }}
+  {{ textarea("description", "Description", values.description, hint="Summarise what the activity involves") }}
+  {{ select("activity_type", "Activity type", activity_type_options, selected=values.activity_type, hint="Choose Analytics / modelling if the activity analyses data to score, rank or predict, to help other activities") }}
+  {{ select("activity_domain", "Activity domain", activity_domain_options, selected=values.activity_domain, hint="Decides which data protection regime applies, using the Regime Policy. Leave as None for everyday activities") }}
+  {{ select("controller_or_processor", "Controller or processor", controller_or_processor_options, selected=values.controller_or_processor, hint="Choose Controller if we decide why and how the data is used. Choose Processor if we act on another organisation's instructions") }}
+  {{ select("lifecycle_stage", "Lifecycle stage", lifecycle_stage_options, selected=values.lifecycle_stage, hint=("Only the DPO/approver may move a trial to live." if trial_hint else "Trial, live or retired. This is separate from the record's approval status")) }}
   {% if error_map.get("lifecycle_stage") %}<p class="govuk-error-message" id="lifecycle_stage-error">{{ error_map.get("lifecycle_stage") }}</p>{% endif %}
-  {{ date_input("trial_start", "Trial start", values.trial_start, error=error_map.get("trial_start")) }}
-  {{ date_input("trial_end", "Trial end", values.trial_end, error=error_map.get("trial_end")) }}
-  {{ textarea("purpose", "Purpose", values.purpose, error=error_map.get("purpose")) }}
-  {{ textarea("categories_of_processing", "Categories of processing", values.categories_of_processing, hint="Required when controller or processor is processor", error=error_map.get("categories_of_processing")) }}
-  {{ checkbox("is_further_processing", "Further processing of data collected for another purpose", checked=values.is_further_processing) }}
-  {{ textarea("further_processing_note", "Compatibility assessment", values.further_processing_note, hint="How the new purpose is compatible with the purpose the data was originally collected for") }}
-  {{ checkboxes("personal_data_source", "Personal data source", personal_data_source_options, checked=values.personal_data_source) }}
+  {{ date_input("trial_start", "Trial start", values.trial_start, hint="Only for trials and pilots", error=error_map.get("trial_start")) }}
+  {{ date_input("trial_end", "Trial end", values.trial_end, hint="When the trial or pilot is due to end", error=error_map.get("trial_end")) }}
+  {{ textarea("purpose", "Purpose", values.purpose, hint="Say why you use this personal data, in plain English", error=error_map.get("purpose")) }}
+  {{ textarea("categories_of_processing", "Categories of processing", values.categories_of_processing, hint="Required if we are a processor. Describe the processing we carry out for the controller", error=error_map.get("categories_of_processing")) }}
+  {{ checkbox("is_further_processing", "This uses data that was collected for a different purpose", checked=values.is_further_processing) }}
+  {{ textarea("further_processing_note", "Compatibility assessment", values.further_processing_note, hint="Explain why the new purpose is compatible with the original one (UK GDPR Art 5(1)(b))") }}
+  {{ checkboxes("personal_data_source", "Where the personal data comes from", personal_data_source_options, checked=values.personal_data_source, hint="Select all that apply") }}
   {% if error_map.get("personal_data_source") %}<p class="govuk-error-message">{{ error_map.get("personal_data_source") }}</p>{% endif %}
-  {{ checkbox("is_statutory_task", "This is a statutory task", checked=values.is_statutory_task) }}
-  {{ checkbox("vulnerable_or_safeguarding_flag", "Involves vulnerable persons or safeguarding", checked=values.vulnerable_or_safeguarding_flag) }}
+  {{ checkbox("is_statutory_task", "This is a statutory task", checked=values.is_statutory_task, hint="Tick if a law requires or allows us to do this work") }}
+  {{ checkbox("vulnerable_or_safeguarding_flag", "Involves vulnerable people or safeguarding", checked=values.vulnerable_or_safeguarding_flag) }}
   {{ checkbox("children_flag", "Involves children", checked=values.children_flag) }}
-  {{ checkbox("online_childrens_service_flag", "Information society service likely to be accessed by children", checked=values.online_childrens_service_flag, hint="Applies regardless of intended audience (UK GDPR Art 25(1), DUAA s81)") }}
-  {{ textarea("childrens_matters_note", "Children's higher-protection assessment", values.childrens_matters_note, hint="The 'likely to be accessed' assessment and how the design has particular regard to protecting and supporting children, their awareness of risks and rights, and their different needs at different ages and stages of development") }}
-  {{ select("external_data_use_mode", "External data use mode", external_data_use_mode_options, selected=values.external_data_use_mode) }}
-  {{ select("lineage_granularity", "Lineage granularity", lineage_granularity_options, selected=values.lineage_granularity) }}
-  {{ checkbox("high_risk_flag", "High risk", checked=values.high_risk_flag) }}
-  {{ select("owner_id", "Owner", user_options, selected=values.owner_id) }}
-  {{ date_input("last_reviewed_at", "Last reviewed", values.last_reviewed_at, error=error_map.get("last_reviewed_at")) }}
-  {{ date_input("next_review_at", "Next review", values.next_review_at, error=error_map.get("next_review_at")) }}
+  {{ checkbox("online_childrens_service_flag", "Online service likely to be used by children", checked=values.online_childrens_service_flag, hint="Tick this even if children are not the intended audience (UK GDPR Art 25(1))") }}
+  {{ textarea("childrens_matters_note", "Children's higher-protection assessment", values.childrens_matters_note, hint="Say whether children are likely to use the service. Explain how it protects and supports them, taking account of their age and stage of development") }}
+  {{ select("external_data_use_mode", "How external data is used", external_data_use_mode_options, selected=values.external_data_use_mode, hint="Choose Automated if a system combines data from outside sources without a person reviewing each record") }}
+  {{ select("lineage_granularity", "Tracing where data came from", lineage_granularity_options, selected=values.lineage_granularity, hint="Choose Record-level if you need to show where each person's data came from, for example for automated decisions. Otherwise choose Activity-level") }}
+  {{ checkbox("high_risk_flag", "High risk", checked=values.high_risk_flag, hint="Tick if the activity could seriously affect people. A data protection impact assessment may be needed") }}
+  {{ select("owner_id", "Owner", user_options, selected=values.owner_id, hint="The person responsible for keeping this record up to date") }}
+  {{ date_input("last_reviewed_at", "Last reviewed", values.last_reviewed_at, hint="When someone last checked this record is correct", error=error_map.get("last_reviewed_at")) }}
+  {{ date_input("next_review_at", "Next review", values.next_review_at, hint="When it should be checked again", error=error_map.get("next_review_at")) }}
 
   {% if is_law_enforcement %}
-  <h2 class="govuk-heading-m">Law enforcement (Part 3) fields</h2>
-  {{ checkboxes("le_data_subject_classification", "Data subject classification (s38)", le_classification_options, checked=values.le_data_subject_classification) }}
+  <h2 class="govuk-heading-m">Law enforcement fields (Part 3)</h2>
+  <p class="govuk-body">These apply because this activity is treated as law enforcement processing under Part 3 of the Data Protection Act 2018.</p>
+  {{ checkboxes("le_data_subject_classification", "Types of people the data is about", le_classification_options, checked=values.le_data_subject_classification, hint="Select every type you keep separate records for (DPA 2018 s38)") }}
   {% if error_map.get("le_data_subject_classification") %}<p class="govuk-error-message">{{ error_map.get("le_data_subject_classification") }}</p>{% endif %}
-  {{ checkbox("le_fact_vs_assessment_noted", "Fact vs assessment distinction noted (s38)", checked=values.le_fact_vs_assessment_noted) }}
-  {{ textarea("s62_logging_note", "s62 logging note", values.s62_logging_note) }}
+  {{ checkbox("le_fact_vs_assessment_noted", "Records separate facts from opinion", checked=values.le_fact_vs_assessment_noted, hint="Tick if case records show which information is fact and which is personal assessment (DPA 2018 s38)") }}
+  {{ textarea("s62_logging_note", "Access and disclosure logging", values.s62_logging_note, hint="Describe how the system records who accessed or disclosed a record, and when (DPA 2018 s62)") }}
   {% endif %}
 
   {% if is_edit %}
-  {{ textarea("change_note", "Change note", "", hint="Optional reason for this change") }}
+  {{ textarea("change_note", "Change note", "", hint="Say why you are making this change (optional)") }}
   {% endif %}
 
   <button type="submit" class="govuk-button" data-module="govuk-button">{{ "Save changes" if is_edit else "Create activity" }}</button>

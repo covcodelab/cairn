@@ -9,21 +9,21 @@
 <form method="post" action="/activities/{{ activity.id }}/basis/part2/consents/{{ (consent_id ~ '/edit') if is_edit else 'new' }}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
-  {{ textarea("consented_to", "Consented to", values.consented_to, error=error_map.get("consented_to")) }}
-  {{ textarea("wording_shown", "Wording shown", values.wording_shown, error=error_map.get("wording_shown")) }}
-  {{ datetime_input("consent_datetime", "Consent date and time", values.consent_datetime, error=error_map.get("consent_datetime")) }}
-  {{ select("consent_method", "Consent method", consent_method_options, selected=values.consent_method) }}
-  {{ select("withdrawal_status", "Withdrawal status", withdrawal_status_options, selected=values.withdrawal_status) }}
-  {{ datetime_input("withdrawal_datetime", "Withdrawal date and time", values.withdrawal_datetime, hint="Required when withdrawal status is withdrawn", error=error_map.get("withdrawal_datetime")) }}
-  {{ date_input("review_due", "Review due", values.review_due) }}
+  {{ textarea("consented_to", "What the person consented to", values.consented_to, hint="For example 'Receiving fire safety newsletters by email'", error=error_map.get("consented_to")) }}
+  {{ textarea("wording_shown", "Wording shown to the person", values.wording_shown, hint="Copy the exact consent wording they saw or heard", error=error_map.get("wording_shown")) }}
+  {{ datetime_input("consent_datetime", "Date and time consent was given", values.consent_datetime, error=error_map.get("consent_datetime")) }}
+  {{ select("consent_method", "How consent was given", consent_method_options, selected=values.consent_method) }}
+  {{ select("withdrawal_status", "Has consent been withdrawn?", withdrawal_status_options, selected=values.withdrawal_status, hint="Choose Active if the person has not withdrawn consent") }}
+  {{ datetime_input("withdrawal_datetime", "Date and time consent was withdrawn", values.withdrawal_datetime, hint="Required if consent has been withdrawn", error=error_map.get("withdrawal_datetime")) }}
+  {{ date_input("review_due", "Review due", values.review_due, hint="When to check this consent is still valid") }}
 
   {% if activity.children_flag %}
-  {{ select("age_check_outcome", "Age check outcome", age_check_outcome_options, selected=values.age_check_outcome) }}
-  {{ checkbox("parental_consent_captured", "Parental consent captured", checked=values.parental_consent_captured, hint="Required when the age check outcome is under 13") }}
+  {{ select("age_check_outcome", "Age check result", age_check_outcome_options, selected=values.age_check_outcome) }}
+  {{ checkbox("parental_consent_captured", "Parental consent captured", checked=values.parental_consent_captured, hint="Required if the age check result is child (under 13)") }}
   {% endif %}
 
   {% if is_edit %}
-  {{ textarea("change_note", "Change note", "", hint="Optional reason for this change") }}
+  {{ textarea("change_note", "Change note", "", hint="Say why you are making this change (optional)") }}
   {% endif %}
 
   <button type="submit" class="govuk-button" data-module="govuk-button">Save</button>

@@ -6,24 +6,26 @@
 <form method="post" action="/setup">
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
+  <p class="govuk-body">Tell Cairn about your organisation. This sets up the register for you and you can change the details later.</p>
+
   {{ text_input("org_name", "Organisation name") }}
 
-  {{ radios("org_type", "Organisation type", org_type_options) }}
+  {{ radios("org_type", "Organisation type", org_type_options, hint="Choose Public authority if you carry out public tasks. This switches on the extra checks that apply to public authorities") }}
 
-  {{ select("sector_pack", "Sector pack", [("frs", "Fire & Rescue Service")], selected="frs") }}
-  <p class="govuk-hint">Only the FRS pack is available in v1.</p>
+  {{ select("sector_pack", "Sector pack", [("frs", "Fire & Rescue Service")], selected="frs", hint="Loads standard lists for your sector, such as teams and types of people. Only Fire & Rescue Service is available for now") }}
 
-  {{ radios("legal_entity_topology", "Legal entity topology", topology_options, checked="single") }}
+  {{ radios("legal_entity_topology", "Legal entities", topology_options, checked="single", hint="Choose Single if one organisation is responsible for the data. Choose Group or Joint if several organisations share responsibility") }}
 
-  {{ checkboxes("applicable_regimes", "Applicable regimes", regime_options, checked=["general"], disabled=["general"]) }}
+  {{ checkboxes("applicable_regimes", "Data protection regimes", regime_options, checked=["general"], disabled=["general"], hint="General always applies. Add Law enforcement if you process data for law enforcement purposes") }}
 
-  {{ checkboxes("active_modules", "Active modules", module_options, checked=["complaints"], disabled=["complaints"]) }}
+  {{ checkboxes("active_modules", "Modules to use", module_options, checked=["complaints"], disabled=["complaints"], hint="Complaints is always on") }}
 
-  {{ checkbox("public_authority_guards", "Enable public-authority guards (rule 4)", checked=true) }}
+  {{ checkbox("public_authority_guards", "Apply public authority checks", checked=true, hint="Sends legitimate interests (f) and recognised legitimate interest (ea) to the DPO for review on statutory work. Public authorities cannot use them for their official tasks") }}
 
-  <h2 class="govuk-heading-m">Bootstrap user</h2>
+  <h2 class="govuk-heading-m">Your account</h2>
+  <p class="govuk-body">You will be the first user, with full access.</p>
   {{ text_input("display_name", "Your name") }}
-  {{ text_input("bootstrap_email", "Your email", hint="Needed to sign in once single sign-on is enabled — must match your organisation account") }}
+  {{ text_input("bootstrap_email", "Your email", hint="Must match your organisation account. You need it to sign in once single sign-on is on") }}
 
   <button type="submit" class="govuk-button" data-module="govuk-button">Complete setup</button>
 </form>

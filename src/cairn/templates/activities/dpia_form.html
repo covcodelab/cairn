@@ -1,27 +1,27 @@
 {% extends "base.html" %}
 {% from "macros.html" import error_summary, select, textarea, date_input %}
-{% block title %}{{ "Edit" if is_edit else "Add" }} DPIA{% endblock %}
+{% block title %}{{ "Edit" if is_edit else "Add" }} data protection impact assessment (DPIA){% endblock %}
 {% block content %}
-<h1 class="govuk-heading-l">{{ "Edit" if is_edit else "Add" }} DPIA</h1>
+<h1 class="govuk-heading-l">{{ "Edit" if is_edit else "Add" }} data protection impact assessment (DPIA)</h1>
 
 {{ error_summary(errors) }}
 
 <form method="post" action="/activities/{{ activity.id }}/dpias/{{ (dpia_id ~ '/edit') if is_edit else 'new' }}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
-  {{ select("screening_outcome", "Screening outcome", screening_outcome_options, selected=values.screening_outcome) }}
-  {{ textarea("nature_scope_context_purposes", "Nature, scope, context and purposes", values.nature_scope_context_purposes, hint="Required once screening outcome is 'required'.") }}
-  {{ textarea("necessity_proportionality", "Necessity and proportionality", values.necessity_proportionality) }}
-  {{ textarea("risks_to_individuals", "Risks to individuals", values.risks_to_individuals) }}
-  {{ textarea("mitigations", "Mitigations", values.mitigations) }}
-  {{ select("residual_risk", "Residual risk", residual_risk_options, selected=values.residual_risk, hint="High residual risk requires prior consultation with the Information Commission before processing.") }}
-  {{ textarea("dpo_advice", "DPO advice", values.dpo_advice) }}
-  {{ select("sign_off_by", "Sign off by", sign_off_options, selected=values.sign_off_by, hint="Limited to approver_dpo users.") }}
+  {{ select("screening_outcome", "Screening outcome", screening_outcome_options, selected=values.screening_outcome, hint="Whether a full DPIA is needed. If you decide it is not, say why in the other fields") }}
+  {{ textarea("nature_scope_context_purposes", "Nature, scope, context and purposes", values.nature_scope_context_purposes, hint="Required if the screening outcome is Required. Describe what you will do with the data and why") }}
+  {{ textarea("necessity_proportionality", "Necessity and proportionality", values.necessity_proportionality, hint="Explain why you need this data and why the processing is a fair way to achieve your purpose") }}
+  {{ textarea("risks_to_individuals", "Risks to individuals", values.risks_to_individuals, hint="What could go wrong for the people whose data you use") }}
+  {{ textarea("mitigations", "Mitigations", values.mitigations, hint="What you will do to reduce each risk") }}
+  {{ select("residual_risk", "Residual risk", residual_risk_options, selected=values.residual_risk, hint="The risk that remains after your mitigations. If it is high, you must consult the Information Commission before you start processing") }}
+  {{ textarea("dpo_advice", "DPO advice", values.dpo_advice, hint="Record the advice the Data Protection Officer gave") }}
+  {{ select("sign_off_by", "Signed off by", sign_off_options, selected=values.sign_off_by, hint="Only approvers and DPOs can sign off a DPIA") }}
   {% if error_map.get("sign_off_by") %}<p class="govuk-error-message">{{ error_map.get("sign_off_by") }}</p>{% endif %}
-  {{ date_input("review_date", "Review date", values.review_date, error=error_map.get("review_date")) }}
+  {{ date_input("review_date", "Review date", values.review_date, hint="When to check the DPIA is still accurate", error=error_map.get("review_date")) }}
 
   {% if is_edit %}
-  {{ textarea("change_note", "Change note", "", hint="Optional reason for this change") }}
+  {{ textarea("change_note", "Change note", "", hint="Say why you are making this change (optional)") }}
   {% endif %}
 
   <button type="submit" class="govuk-button" data-module="govuk-button">Save</button>

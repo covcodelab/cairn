@@ -4,7 +4,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <h1 class="govuk-heading-l">Import information assets</h1>
-    <p class="govuk-body">Bulk load an asset inventory or CMDB extract: upload a mapped CSV and each row becomes an approved information asset. You'll see a preview with any row errors before anything is created. To bulk-load processing activities rather than assets, use <a class="govuk-link" href="/imports">import questionnaire</a>.</p>
+    <p class="govuk-body">Bulk load an asset inventory or CMDB extract: upload a mapped CSV and each row becomes an information asset. You'll see a preview with any row errors before anything is created. A row that uses a supplier or security measure that is not yet approved is created as proposed and goes to the approval queue. To bulk-load processing activities rather than assets, use <a class="govuk-link" href="/imports">import questionnaire</a>.</p>
     <p class="govuk-body"><a class="govuk-link" href="/static/iar-import-template.csv">Download the CSV template</a> — it has every column in the right order, with example rows showing the expected values.</p>
     <p class="govuk-body">Before uploading, check that:</p>
     <ul class="govuk-list govuk-list--bullet">
@@ -43,20 +43,20 @@
         </tr>
       </thead>
       <tbody class="govuk-table__body">
-        <tr class="govuk-table__row"><td class="govuk-table__cell">label</td><td class="govuk-table__cell">Yes</td><td class="govuk-table__cell">A row whose label already matches an existing asset (case-insensitive) is reported as a duplicate and skipped</td></tr>
+        <tr class="govuk-table__row"><td class="govuk-table__cell">label</td><td class="govuk-table__cell">Yes</td><td class="govuk-table__cell">The asset name. A row with the same name as an existing asset (ignoring case) is reported as a duplicate and skipped</td></tr>
         <tr class="govuk-table__row"><td class="govuk-table__cell">asset_type</td><td class="govuk-table__cell">Yes</td><td class="govuk-table__cell">system, database, software, paper or physical</td></tr>
-        <tr class="govuk-table__row"><td class="govuk-table__cell">description</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">Free text</td></tr>
-        <tr class="govuk-table__row"><td class="govuk-table__cell">iao_email</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">Must exactly match an existing user's email (case-insensitive); unmatched leaves the IAO unset</td></tr>
+        <tr class="govuk-table__row"><td class="govuk-table__cell">description</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">What the asset is and what information it holds</td></tr>
+        <tr class="govuk-table__row"><td class="govuk-table__cell">iao_email</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">The Information Asset Owner. Must match an existing user's email (ignoring case). If it matches nobody, the owner is left blank</td></tr>
         <tr class="govuk-table__row"><td class="govuk-table__cell">custodian</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">Free text</td></tr>
-        <tr class="govuk-table__row"><td class="govuk-table__cell">business_function</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">One or more, semicolon-separated; each must match an existing business function (case-insensitive) — unmatched labels are skipped with a warning</td></tr>
+        <tr class="govuk-table__row"><td class="govuk-table__cell">business_function</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">One or more, separated by semicolons. Each must match an existing business function (ignoring case). Names that match nothing are skipped with a warning</td></tr>
         <tr class="govuk-table__row"><td class="govuk-table__cell">classification</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">not_classified, official or official_sensitive; blank keeps the default</td></tr>
         <tr class="govuk-table__row"><td class="govuk-table__cell">contains_personal_data</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">yes/no; blank keeps the default (no)</td></tr>
         <tr class="govuk-table__row"><td class="govuk-table__cell">status</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">in_use, retiring or disposed; blank keeps the default</td></tr>
         <tr class="govuk-table__row"><td class="govuk-table__cell">next_review_date</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">YYYY-MM-DD or DD/MM/YYYY</td></tr>
-        <tr class="govuk-table__row"><td class="govuk-table__cell">supplier</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">Must exactly match an existing legal entity (case-insensitive); unmatched leaves it unset</td></tr>
+        <tr class="govuk-table__row"><td class="govuk-table__cell">supplier</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">Matched to an existing legal entity by name (ignoring case). A name that matches nothing is proposed as a new legal entity for approval, and the asset is created as proposed until it is approved</td></tr>
         <tr class="govuk-table__row"><td class="govuk-table__cell">location / hosting_country</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">Free text</td></tr>
-        <tr class="govuk-table__row"><td class="govuk-table__cell">retention_rule</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">Must exactly match an existing retention rule (case-insensitive); unmatched leaves it unset — retention rules are never auto-proposed</td></tr>
-        <tr class="govuk-table__row"><td class="govuk-table__cell">security_measures</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">Semicolon-separated names. Unmatched names become vocabulary proposals for a curator to approve.</td></tr>
+        <tr class="govuk-table__row"><td class="govuk-table__cell">retention_rule</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">Must match an existing retention rule (ignoring case). If it matches nothing it is left blank. Retention rules are never proposed automatically</td></tr>
+        <tr class="govuk-table__row"><td class="govuk-table__cell">security_measures</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">Separate names with semicolons. A name that matches nothing is proposed as a new security measure, and the asset is created as proposed until a curator approves it</td></tr>
       </tbody>
     </table>
   </div>

@@ -2,29 +2,29 @@
 {% from "macros.html" import error_summary, select, textarea, checkboxes, radios %}
 {% block title %}{{ "Edit" if is_edit else "Add" }} ADM record{% endblock %}
 {% block content %}
-<h1 class="govuk-heading-l">{{ "Edit" if is_edit else "Add" }} decision-support / ADM record</h1>
+<h1 class="govuk-heading-l">{{ "Edit" if is_edit else "Add" }} automated decision-making record</h1>
 
 {{ error_summary(errors) }}
 
 <form method="post" action="/activities/{{ activity.id }}/adm/{{ (adm_id ~ '/edit') if is_edit else 'new' }}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
-  {{ select("use_mode", "Use mode", use_mode_options, selected=values.use_mode) }}
-  {{ checkboxes("data_sources", "Data sources", data_source_options, checked=values.data_sources) }}
+  {{ select("use_mode", "How the tool is used", use_mode_options, selected=values.use_mode, hint="Choose Automated if the tool runs without a person starting it each time") }}
+  {{ checkboxes("data_sources", "Data sources", data_source_options, checked=values.data_sources, hint="Select every source of data the tool uses") }}
   {% if error_map.get("data_sources") %}<p class="govuk-error-message">{{ error_map.get("data_sources") }}</p>{% endif %}
-  {{ textarea("technique", "Technique", values.technique) }}
-  {{ radios("solely_automated", "Solely automated decision-making (Art 22A)", [("true", "Yes"), ("false", "No")], checked=values.solely_automated) }}
+  {{ textarea("technique", "Technique", values.technique, hint="Describe how it works, for example 'Scoring model' or 'Rules-based triage'") }}
+  {{ radios("solely_automated", "Is the decision made only by automated means? (Art 22A)", [("true", "Yes"), ("false", "No")], checked=values.solely_automated, hint="Answer No if a person meaningfully reviews each decision") }}
   {% if error_map.get("solely_automated") %}<p class="govuk-error-message">{{ error_map.get("solely_automated") }}</p>{% endif %}
-  {{ radios("significant_effects", "Legal or similarly significant effects (Art 22A)", [("true", "Yes"), ("false", "No")], checked=values.significant_effects) }}
+  {{ radios("significant_effects", "Does it have a legal or similarly significant effect on people? (Art 22A)", [("true", "Yes"), ("false", "No")], checked=values.significant_effects, hint="For example, it affects someone's rights, access to a service or employment") }}
   {% if error_map.get("significant_effects") %}<p class="govuk-error-message">{{ error_map.get("significant_effects") }}</p>{% endif %}
-  {{ textarea("accuracy_bias_checks", "Accuracy / bias checks (Art 22C safeguard)", values.accuracy_bias_checks) }}
-  {{ textarea("human_review", "Human review (Art 22C safeguard)", values.human_review) }}
-  {{ textarea("contestability", "Contestability — representations and contesting the decision (Art 22C safeguard)", values.contestability) }}
-  {{ select("transparency_ref", "Transparency reference (privacy notice)", transparency_ref_options, selected=values.transparency_ref) }}
+  {{ textarea("accuracy_bias_checks", "Accuracy and bias checks (Art 22C)", values.accuracy_bias_checks, hint="Describe how you test that the tool is accurate and fair") }}
+  {{ textarea("human_review", "Human review (Art 22C)", values.human_review, hint="Describe how a person can step in and review a decision") }}
+  {{ textarea("contestability", "How people can challenge a decision (Art 22C)", values.contestability, hint="Explain how people can give their views and contest the decision") }}
+  {{ select("transparency_ref", "Privacy notice that explains this", transparency_ref_options, selected=values.transparency_ref, hint="Choose the notice that tells people about the automated decision-making") }}
   {% if error_map.get("transparency_ref") %}<p class="govuk-error-message">{{ error_map.get("transparency_ref") }}</p>{% endif %}
 
   {% if is_edit %}
-  {{ textarea("change_note", "Change note", "", hint="Optional reason for this change") }}
+  {{ textarea("change_note", "Change note", "", hint="Say why you are making this change (optional)") }}
   {% endif %}
 
   <button type="submit" class="govuk-button" data-module="govuk-button">Save</button>

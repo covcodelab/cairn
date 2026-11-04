@@ -9,19 +9,26 @@
 <form method="post" action="{{ ('/complaints/' ~ target_id) if is_edit else '/complaints' }}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
-  {{ select("activity_id", "Linked activity", activity_options, selected=values.activity_id) }}
-  {{ date_input("received_at", "Date received", values.received_at, hint="Statutory deadline: acknowledge within 30 days of receipt", error=error_map.get("received_at")) }}
-  {{ date_input("acknowledged_at", "Date acknowledged", values.acknowledged_at, hint="Statutory deadline: acknowledge within 30 days of receipt", error=error_map.get("acknowledged_at")) }}
-  {{ date_input("response_due", "Response due", values.response_due, hint="Defaults to 30 days after receipt if left blank (internal target — the Act requires a response without undue delay)", error=error_map.get("response_due")) }}
-  {{ date_input("responded_at", "Date responded", values.responded_at, error=error_map.get("responded_at")) }}
+  {{ select("activity_id", "Linked activity", activity_options, selected=values.activity_id, hint="The activity the complaint is about, if it relates to one") }}
+
+  <h2 class="govuk-heading-m">1. Receive and acknowledge</h2>
+  {{ date_input("received_at", "Date received", values.received_at, hint="The day the complaint reached us", error=error_map.get("received_at")) }}
+  {{ date_input("acknowledged_at", "Date acknowledged", values.acknowledged_at, hint="You must acknowledge the complaint within 30 days of receiving the complaint (DPA 2018 s164A)", error=error_map.get("acknowledged_at")) }}
+
+  <h2 class="govuk-heading-m">2. Investigate and keep the complainant informed</h2>
+  <p class="govuk-body">You must take appropriate steps to respond without undue delay. That includes making enquiries and keeping the complainant informed of progress (DPA 2018 s164A).</p>
+  {{ date_input("response_due", "Response due", values.response_due, hint="Our target date. If you leave it blank, it is set to 30 days after the date received", error=error_map.get("response_due")) }}
+  {{ textarea("enquiries_note", "Enquiries made", values.enquiries_note, hint="Describe the enquiries you made into the subject of the complaint, as far as appropriate") }}
+  {{ textarea("progress_updates", "Progress updates given to the complainant", values.progress_updates, hint="Record each update and the date you gave it") }}
+
+  <h2 class="govuk-heading-m">3. Respond and tell the complainant the outcome</h2>
+  {{ date_input("responded_at", "Date responded", values.responded_at, hint="The day you sent the full response", error=error_map.get("responded_at")) }}
   {{ select("outcome", "Outcome", outcome_options, selected=values.outcome) }}
-  {{ date_input("outcome_communicated_at", "Date outcome communicated to complainant", values.outcome_communicated_at, hint="Required once an outcome is set (DPA 2018 s164A(4)(b))", error=error_map.get("outcome_communicated_at")) }}
-  {{ textarea("enquiries_note", "Enquiries made", values.enquiries_note, hint="Enquiries made into the subject matter of the complaint, to the extent appropriate (s164A(5)(a))") }}
-  {{ textarea("progress_updates", "Progress updates given to complainant", values.progress_updates, hint="Record each update and its date (s164A(5)(b))") }}
-  {{ checkbox("ico_escalation_flagged", "Complainant informed of Information Commission escalation route", checked=values.ico_escalation_flagged) }}
+  {{ date_input("outcome_communicated_at", "Date outcome told to the complainant", values.outcome_communicated_at, hint="Required once you record an outcome (DPA 2018 s164A)", error=error_map.get("outcome_communicated_at")) }}
+  {{ checkbox("ico_escalation_flagged", "Complainant told they can complain to the Information Commission", checked=values.ico_escalation_flagged, hint="Tick once you have told them") }}
 
   {% if is_edit %}
-  {{ textarea("change_note", "Change note", "", hint="Optional reason for this change") }}
+  {{ textarea("change_note", "Change note", "", hint="Say why you are making this change (optional)") }}
   {% endif %}
 
   <button type="submit" class="govuk-button" data-module="govuk-button">{{ "Save changes" if is_edit else "Create complaint" }}</button>

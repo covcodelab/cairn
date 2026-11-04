@@ -9,14 +9,14 @@
 <form method="post" action="{{ ('/users/' ~ target_id) if is_edit else '/users' }}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
-  {{ text_input("display_name", "Display name", values.display_name, error=error_map.get("display_name")) }}
-  {{ text_input("email", "Email (for single sign-on)", values.email, hint="Must match the account they sign in with at the identity provider", error=error_map.get("email")) }}
-  {{ select("role", "Role", role_options, selected=values.role) }}
-  {{ select("business_function_id", "Business function", business_function_options, selected=values.business_function_id) }}
+  {{ text_input("display_name", "Display name", values.display_name, hint="The name shown on records and in the audit trail", error=error_map.get("display_name")) }}
+  {{ text_input("email", "Email", values.email, hint="Must match the email of the account they use to sign in", error=error_map.get("email")) }}
+  {{ select("role", "Role", role_options, selected=values.role, hint="Contributors add draft records for their own team. Curators manage records and reference data. Approvers (DPO) also sign off records and change policy. Viewers can only read") }}
+  {{ select("business_function_id", "Business function", business_function_options, selected=values.business_function_id, hint="Required for contributors. They can only add and edit records for this team") }}
   {% if error_map.get("business_function_id") %}<p class="govuk-error-message">{{ error_map.get("business_function_id") }}</p>{% endif %}
 
   {% if is_edit %}
-  {{ textarea("change_note", "Change note", "", hint="Optional reason for this change") }}
+  {{ textarea("change_note", "Change note", "", hint="Say why you are making this change (optional)") }}
   {% endif %}
 
   <button type="submit" class="govuk-button" data-module="govuk-button">{{ "Save changes" if is_edit else "Create user" }}</button>

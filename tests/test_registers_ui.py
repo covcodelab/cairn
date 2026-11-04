@@ -307,7 +307,7 @@ def test_adm_section_shown_only_when_relevant(activities_client, activities_web_
         activities_client, activities_web_engine, login_as="Cara Curator"
     )
     plain_detail = activities_client.get(f"/activities/{plain_id}")
-    assert "Decision-support / ADM" not in plain_detail.text
+    assert "Automated decision-making (ADM)" not in plain_detail.text
 
     adm_id = _create_activity(
         activities_client,
@@ -316,7 +316,7 @@ def test_adm_section_shown_only_when_relevant(activities_client, activities_web_
         external_data_use_mode="manual",
     )
     adm_detail = activities_client.get(f"/activities/{adm_id}")
-    assert "Decision-support / ADM" in adm_detail.text
+    assert "Automated decision-making (ADM)" in adm_detail.text
 
 
 def test_adm_round_trip_data_sources_limited_to_linked(activities_client, activities_web_engine):
@@ -349,7 +349,7 @@ def test_adm_round_trip_data_sources_limited_to_linked(activities_client, activi
     assert created.status_code == 302
 
     detail = activities_client.get(f"/activities/{activity_id}")
-    assert "Decision-support / ADM" in detail.text
+    assert "Automated decision-making (ADM)" in detail.text
 
 
 def test_adm_author_forbidden_for_contributor(activities_client, activities_web_engine):
