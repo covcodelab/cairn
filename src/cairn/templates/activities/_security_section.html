@@ -30,11 +30,14 @@
 {% if can_author_registers and security_measure_options %}
 <form method="post" action="/activities/{{ activity.id }}/security">
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-  <select class="govuk-select" name="security_measure_id">
-    {% for value, text in security_measure_options %}
-    <option value="{{ value }}">{{ text }}</option>
-    {% endfor %}
-  </select>
+  <div class="govuk-form-group">
+    <label class="govuk-label" for="security-security_measure_id">Security measure to add</label>
+    <select class="govuk-select" id="security-security_measure_id" name="security_measure_id">
+      {% for value, text in security_measure_options %}
+      <option value="{{ value }}">{{ text }}</option>
+      {% endfor %}
+    </select>
+  </div>
   <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button">Add security measure</button>
 </form>
 {% endif %}

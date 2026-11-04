@@ -1,4 +1,4 @@
 {% from "activities/_junction_macros.html" import simple_junction_section %}
-{{ simple_junction_section(kind, section_title, items, options, activity.id, csrf_token) }}
+{{ simple_junction_section(kind, section_title, items, options, activity.id, csrf_token, add_label) }}
 {% set oob = true %}
 {% include "activities/_findings_section.html" %}

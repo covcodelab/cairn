@@ -165,6 +165,15 @@ SECTION_TITLES = {
     "privacy-notices": "Privacy notices",
 }
 
+ADD_LABELS = {
+    "data-subjects": "Data subject to add",
+    "recipients": "Recipient to add",
+    "assets": "Asset to link",
+    "data-sources": "External data source to add",
+    "controllers": "Controller to add",
+    "privacy-notices": "Privacy notice to add",
+}
+
 JUNCTION_CONTEXT_KEYS = {
     "data-subjects": ("data_subjects", "data_subject_options"),
     "recipients": ("recipients", "recipient_options"),
@@ -543,6 +552,7 @@ def _render_detail(
         "can_activate": user.role == Role.APPROVER_DPO,
         "can_override_regime": user.role == Role.APPROVER_DPO,
         "csrf_token": get_csrf_token(request),
+        "add_labels": ADD_LABELS,
         "record_status_labels": RECORD_STATUS_LABELS,
         "regime_labels": REGIME_LABELS,
         "error": error,
@@ -579,6 +589,7 @@ def _junction_fragment_response(
             "csrf_token": get_csrf_token(request),
             "kind": kind,
             "section_title": SECTION_TITLES[kind],
+            "add_label": ADD_LABELS[kind],
             "items": junction_context[items_key],
             "options": junction_context[options_key],
             **_findings_context(activity, profile),
