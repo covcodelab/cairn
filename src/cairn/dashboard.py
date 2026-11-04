@@ -30,6 +30,7 @@ from cairn.models import (
     activity_asset,
 )
 from cairn.rules import Severity, evaluate, evaluate_asset
+from cairn.setup import COMMENCEMENT_WATCH
 from cairn.templating import templates
 from cairn.vocabularies import pending_proposals_count
 
@@ -47,6 +48,9 @@ COMMENCEMENT_LABELS = {
         "purpose limitation (SI 2026/82)"
     ),
     "s164a_complaints": "DPA 2018 s164A complaints-handling duty",
+    "information_commission": (
+        "Information Commission replaces the ICO — DUAA ss 118–119 (SI 2026/1015)"
+    ),
 }
 
 
@@ -260,7 +264,7 @@ def dashboard(
     if "commencement" in sections:
         context["commencement_watch"] = [
             (COMMENCEMENT_LABELS.get(k, k), v)
-            for k, v in sorted((profile.commencement_watch or {}).items())
+            for k, v in sorted({**COMMENCEMENT_WATCH, **(profile.commencement_watch or {})}.items())
         ]
 
     context |= {

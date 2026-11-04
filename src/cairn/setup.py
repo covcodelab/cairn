@@ -42,6 +42,7 @@ REGIME_LABELS = {
 COMMENCEMENT_WATCH = {
     "duaa_principal": "2026-02-05",
     "s164a_complaints": "2026-06-19",
+    "information_commission": "2026-09-30",
 }
 
 

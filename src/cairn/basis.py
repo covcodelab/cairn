@@ -22,6 +22,7 @@ from cairn.models import (
     OrganisationProfile,
     ProcessingActivity,
     RegimeScope,
+    RLICondition,
     Role,
     Schedule1Condition,
     Schedule8Condition,
@@ -54,6 +55,16 @@ AGE_CHECK_OUTCOME_LABELS = {
     AgeCheckOutcome.CHILD_UNDER_13: "Child (under 13)",
     AgeCheckOutcome.UNKNOWN: "Unknown",
 }
+RLI_CONDITION_LABELS = {
+    RLICondition.NATIONAL_SECURITY_DEFENCE: "National security, public security and defence",
+    RLICondition.EMERGENCIES: "Emergencies",
+    RLICondition.CRIME: "Crime",
+    RLICondition.SAFEGUARDING_VULNERABLE: "Safeguarding vulnerable individuals",
+    RLICondition.PUBLIC_INTEREST_DISCLOSURE_REQUEST: (
+        "Disclosure to a public-interest body on request"
+    ),
+}
+
 LIA_DECISION_LABELS = {
     LIADecision.PROCEED: "Proceed",
     LIADecision.DO_NOT_PROCEED: "Do not proceed",
@@ -234,6 +245,13 @@ def _validate_part2(session: Session, values: dict) -> list[dict]:
         error = _validate_fk(session, model, values[field], field, label)
         if error:
             errors.append(error)
+    if values["art6_basis_id"] and not values["art6_justification"]:
+        errors.append(
+            {
+                "field": "art6_justification",
+                "message": "Enter the justification for the Art 6 basis",
+            }
+        )
     return errors
 
 
@@ -673,6 +691,7 @@ async def consent_update(
 def _new_lia_values() -> dict:
     return {
         "interest_identified": "",
+        "rli_condition": "",
         "necessity_test": "",
         "balancing_test": "",
         "safeguards": "",
@@ -684,6 +703,7 @@ def _new_lia_values() -> dict:
 def _lia_to_values(lia: LIARLIRecord) -> dict:
     return {
         "interest_identified": lia.interest_identified,
+        "rli_condition": lia.rli_condition.value if lia.rli_condition else "",
         "necessity_test": lia.necessity_test,
         "balancing_test": lia.balancing_test or "",
         "safeguards": lia.safeguards or "",
@@ -695,6 +715,7 @@ def _lia_to_values(lia: LIARLIRecord) -> dict:
 def _parse_lia_form(form) -> dict:
     return {
         "interest_identified": form.get("interest_identified", "").strip(),
+        "rli_condition": form.get("rli_condition", ""),
         "necessity_test": form.get("necessity_test", "").strip(),
         "balancing_test": form.get("balancing_test", "").strip(),
         "safeguards": form.get("safeguards", "").strip(),
@@ -709,6 +730,8 @@ def _validate_lia(values: dict) -> list[dict]:
         errors.append({"field": "interest_identified", "message": "Enter the interest identified"})
     if not values["necessity_test"]:
         errors.append({"field": "necessity_test", "message": "Enter the necessity test"})
+    if values["rli_condition"] not in ("", *RLICondition):
+        errors.append({"field": "rli_condition", "message": "Select a valid recognised interest"})
     try:
         LIADecision(values["decision"])
     except ValueError:
@@ -722,6 +745,7 @@ def _validate_lia(values: dict) -> list[dict]:
 
 def _apply_lia_values(lia: LIARLIRecord, values: dict) -> None:
     lia.interest_identified = values["interest_identified"]
+    lia.rli_condition = RLICondition(values["rli_condition"]) if values["rli_condition"] else None
     lia.necessity_test = values["necessity_test"]
     lia.balancing_test = values["balancing_test"] or None
     lia.safeguards = values["safeguards"] or None
@@ -752,6 +776,8 @@ def _lia_form_context(
         "error_map": error_map,
         "csrf_token": csrf_token,
         "decision_options": list(LIA_DECISION_LABELS.items()),
+        "rli_options": [("", "Not applicable")]
+        + [(c.value, label) for c, label in RLI_CONDITION_LABELS.items()],
     }
 
 
@@ -938,4 +964,5 @@ def basis_detail_context(session: Session, activity: ProcessingActivity, user: U
         "withdrawal_status_labels": WITHDRAWAL_STATUS_LABELS,
         "age_check_outcome_labels": AGE_CHECK_OUTCOME_LABELS,
         "lia_decision_labels": LIA_DECISION_LABELS,
+        "rli_condition_labels": RLI_CONDITION_LABELS,
     }

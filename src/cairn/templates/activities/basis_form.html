@@ -13,7 +13,7 @@
   {{ select("art6_basis_id", "Art 6 basis", art6_options, selected=values.art6_basis_id, hint=("Public task (e) is the natural basis for a statutory task; legitimate interests ((f)/(ea)) will be flagged for DPO review." if guard_hint else None)) }}
   {% if error_map.get("art6_basis_id") %}<p class="govuk-error-message">{{ error_map.get("art6_basis_id") }}</p>{% endif %}
 
-  {{ textarea("art6_justification", "Art 6 justification", values.art6_justification) }}
+  {{ textarea("art6_justification", "Art 6 justification", values.art6_justification, error=error_map.get("art6_justification")) }}
 
   {% if show_art9 %}
   {{ select("art9_condition_id", "Art 9 condition", art9_options, selected=values.art9_condition_id, hint="Required for special-category data.") }}

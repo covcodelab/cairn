@@ -306,3 +306,70 @@ def test_nav_link_visible_for_curator_absent_for_viewer(
     _login(activities_client, activities_web_engine, "Vic Viewer")
     home = activities_client.get("/")
     assert 'href="/review"' not in _nav_html(home.text)
+
+
+def _complaint_data(token, **overrides) -> dict:
+    data = {
+        "csrf_token": token,
+        "activity_id": "",
+        "received_at": "2026-06-01",
+        "acknowledged_at": "",
+        "response_due": "",
+        "responded_at": "",
+        "outcome": "",
+    }
+    return data | overrides
+
+
+def test_complaint_evidence_fields_saved_and_shown_on_edit(
+    activities_client, activities_web_engine
+):
+    _login(activities_client, activities_web_engine, "Cara Curator")
+    token = _token(activities_client)
+    response = activities_client.post(
+        "/complaints",
+        data=_complaint_data(
+            token,
+            responded_at="2026-06-20",
+            outcome="upheld",
+            outcome_communicated_at="2026-06-21",
+            enquiries_note="Spoke to the station manager.",
+            progress_updates="Updated complainant on 10 June.",
+        ),
+    )
+    assert response.status_code == 302, response.text
+    with Session(activities_web_engine) as db:
+        created = db.scalars(select(ComplaintRecord)).one()
+        assert created.enquiries_note == "Spoke to the station manager."
+        assert created.progress_updates == "Updated complainant on 10 June."
+        assert created.outcome_communicated_at == datetime.combine(date(2026, 6, 21), time.min)
+        complaint_id = created.id
+    edit = activities_client.get(f"/complaints/{complaint_id}/edit")
+    assert "Spoke to the station manager." in edit.text
+    assert 'value="2026-06-21"' in edit.text
+
+
+def test_validation_outcome_without_communicated_date(activities_client, activities_web_engine):
+    _login(activities_client, activities_web_engine, "Cara Curator")
+    token = _token(activities_client)
+    response = activities_client.post(
+        "/complaints",
+        data=_complaint_data(token, responded_at="2026-06-20", outcome="upheld"),
+    )
+    assert response.status_code == 422
+    assert "Enter the date the outcome was communicated to the complainant" in response.text
+
+
+def test_validation_invalid_outcome_communicated_date(activities_client, activities_web_engine):
+    _login(activities_client, activities_web_engine, "Cara Curator")
+    token = _token(activities_client)
+    response = activities_client.post(
+        "/complaints",
+        data=_complaint_data(
+            token,
+            responded_at="2026-06-20",
+            outcome="upheld",
+            outcome_communicated_at="nope",
+        ),
+    )
+    assert response.status_code == 422

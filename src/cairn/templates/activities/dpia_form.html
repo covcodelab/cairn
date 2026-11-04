@@ -14,7 +14,7 @@
   {{ textarea("necessity_proportionality", "Necessity and proportionality", values.necessity_proportionality) }}
   {{ textarea("risks_to_individuals", "Risks to individuals", values.risks_to_individuals) }}
   {{ textarea("mitigations", "Mitigations", values.mitigations) }}
-  {{ select("residual_risk", "Residual risk", residual_risk_options, selected=values.residual_risk, hint="High residual risk requires prior consultation with the ICO before processing.") }}
+  {{ select("residual_risk", "Residual risk", residual_risk_options, selected=values.residual_risk, hint="High residual risk requires prior consultation with the Information Commission before processing.") }}
   {{ textarea("dpo_advice", "DPO advice", values.dpo_advice) }}
   {{ select("sign_off_by", "Sign off by", sign_off_options, selected=values.sign_off_by, hint="Limited to approver_dpo users.") }}
   {% if error_map.get("sign_off_by") %}<p class="govuk-error-message">{{ error_map.get("sign_off_by") }}</p>{% endif %}

@@ -182,7 +182,7 @@ Each is a managed controlled vocabulary. Common shape: `id`, `label`, plus the a
 | `activity_id` | fk → Processing Activity | Y | Unique with `regime_scope` |
 | `regime_scope` | enum(part2, part3) | Y | **[spec clarification]** dual-mapping discriminator (see note above) |
 | `art6_basis` | fk → Lawful Basis general | C | Required on `part2`-scope records |
-| `art6_justification` | longtext | C | Required on `part2`-scope records |
+| `art6_justification` | longtext | C | Required on `part2`-scope records when an Art 6 basis is set (enforced on save; not required for `part3`) — **Revised 2026-11-04** |
 | `art9_condition` | fk → Special Category Condition | C | Required when `special_category_flag` (`part2` scope) |
 | `schedule1_condition` | fk → Schedule 1 Condition | C | Required when the Art 9 condition `needs_schedule1` |
 | `art10_basis` | text | C | Required when `criminal_offence_flag` (official authority or Sch 1; `part2` scope) |
@@ -209,6 +209,7 @@ Each is a managed controlled vocabulary. Common shape: `id`, `label`, plus the a
 |-------|------|-----|-------|
 | `lawful_basis_record_id` | fk | Y | For (f) or (ea) |
 | `interest_identified` | longtext | Y | |
+| `rli_condition` | enum(national_security_defence, emergencies, crime, safeguarding_vulnerable, public_interest_disclosure_request) | C | Annex 1 recognised interest; required for (ea) (rule 5) — **Revised 2026-11-04** |
 | `necessity_test` | longtext | Y | |
 | `balancing_test` | longtext | C | Required for (f); **not** required for (ea) RLI |
 | `safeguards` | longtext | N | |
@@ -241,7 +242,7 @@ Each is a managed controlled vocabulary. Common shape: `id`, `label`, plus the a
 | `necessity_proportionality` | longtext | C | |
 | `risks_to_individuals` | longtext | C | |
 | `mitigations` | longtext | C | |
-| `residual_risk` | enum(low, medium, high) | C | `high` → prior consultation with ICO |
+| `residual_risk` | enum(low, medium, high) | C | `high` → prior consultation with the Information Commission |
 | `dpo_advice` | longtext | N | |
 | `sign_off_by` | fk → User | C | approver_dpo role |
 | `review_date` | date | C | |
@@ -282,7 +283,10 @@ Each is a managed controlled vocabulary. Common shape: `id`, `label`, plus the a
 | `acknowledged_at` | datetime | C | Must be ≤ 30 days after `received_at` |
 | `response_due` / `responded_at` | date/datetime | Y/C | |
 | `outcome` | enum(upheld, partly_upheld, not_upheld, withdrawn) | C | |
-| `ico_escalation_flagged` | bool | Y | Complainant informed of ICO escalation route |
+| `outcome_communicated_at` | datetime | C | Required when `outcome` is set — s164A(4)(b) *(Revised 2026-11-04)* |
+| `enquiries_note` | longtext | N | Enquiries made into the subject matter, s164A(5)(a) *(Revised 2026-11-04)* |
+| `progress_updates` | longtext | N | Progress given to the complainant, s164A(5)(b) *(Revised 2026-11-04)* |
+| `ico_escalation_flagged` | bool | Y | Complainant informed of Information Commission escalation route (column name unchanged) |
 
 ### 6.11 Decision-support / ADM Record (Plan §3.6)
 | Field | Type | Req | Notes |
@@ -429,7 +433,7 @@ Notation: **Trigger** (field condition) → **Requirement** (blocking unless sta
 | 2 | chosen Art 9 condition `needs_schedule1 = true` | require a `schedule1_condition`; require `apd_id` **only when that Schedule 1 condition `needs_apd = true`** (§7.4) — so (b)/(g) conditions need an APD, but (h)/(i)/(j) do not | all |
 | 3 | any linked Personal Data Category `is_criminal_offence = true` | require `art10_basis` (official authority or Sch 1) | general regime |
 | 4 | `regime = general` AND activity is a statutory task | default `art6_basis = e`; **flag** `f`/`ea` for DPO review (warn, not block) | *[profile: public_authority]* |
-| 5 | `art6_basis = f` | require LIA/RLI Record with `balancing_test` | all |
+| 5 | `art6_basis = f` or `ea` | `f`: require LIA/RLI Record with `balancing_test`; `ea`: require LIA/RLI Record with `rli_condition` set (Annex 1 interest) — **Revised 2026-11-04** | all |
 | 6 | `art6_basis = a` | require Consent Record; if `children_flag` → require `age_check_outcome` + (`parental_consent_captured` when under-13) | all |
 | 7 | `vulnerable_or_safeguarding_flag` OR `children_flag` | require DPIA screening; prompt extra safeguards; steer Art 9 → `g` + Sch 1 para 18 + APD | all |
 | 8 | `external_data_use_mode ≠ none` | require ≥1 `activity_datasource` + Art 14 privacy-notice ref; if `automated` → require Decision-support/ADM Record + Art 22A–22D assessment (`solely_automated`,`significant_effects`); stricter path where it decides | *[module: external_data]* |
@@ -658,7 +662,7 @@ A combined internal register exports all activities across every view for day-to
 - **FRS pack content** — **done in this version**: the full Schedule 1 (§7.4) and Schedule 8 (§7.5) vocabularies and the FRS seed lists (§7.9–7.14) are now complete. Remaining for build 1a: load them as data and confirm the FRS-priority defaults.
 - **Record vs authoring state** — **confirmed**. The `record_status` (draft/in_review/active/retired, the authoring/approval state) and `lifecycle_stage` (trial/live/retired, the processing's maturity) split defined in §3 is the agreed model, resolving the plan's overlapping single `status` field.
 - **APD determination** — **[spec clarification]** the appropriate-policy-document requirement is read from the chosen **Schedule 1 condition** (§7.4), not the Art 9 point; (h)/(i)/(j) need a Schedule 1 condition but no APD. Rule 2 and §7.3 reflect this.
-- **DUAA commencement watch**: keep the transfer test, ADM, children's and complaints provisions under review as ICO guidance is finalised (Plan §1.4). Verify the Schedule 1/8 vocabularies against the latest *revised* legislation for any DUAA amendments before seeding.
+- **DUAA commencement watch** — **Revised 2026-11-04:** all the DUAA data-protection provisions Cairn tracks (principal provisions 5 Feb 2026, complaints duty 19 Jun 2026, and the Part 6 transfer of the regulator's functions to the Information Commission on 30 Sep 2026 by SI 2026/1015) are now in force; the `information_commission` watch key is merged into the dashboard from the statutory defaults. The remaining watch is the final ADM/AI statutory code and Information Commission guidance (Plan §1.4). Verify the Schedule 1/8 vocabularies against the latest *revised* legislation for any DUAA amendments before seeding.
 - **Phase 1.7 spike outcomes** — **applied in v0.4**: the spike (`spike-findings.md`) validated the dual mapping and the profile-conditioned rule engine, and this version adopts its two clarifications — the `regime_scope` discriminator on the Lawful Basis Record (§6.1) and the unified `general`/`law_enforcement` regime enum on the Regime Policy (§2.2). Carried forward for the build: version capture must be enforced at the persistence layer (rule 17 is "always", not caller-optional).
 
 ---
