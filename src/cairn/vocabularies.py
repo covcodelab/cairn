@@ -55,6 +55,7 @@ class VocabField:
     fk_model: type | None = None
     fk_label_attr: str = "label"
     default: str | None = None
+    hint: str | None = None
 
 
 @dataclass(frozen=True)
@@ -85,14 +86,18 @@ VOCABULARIES: dict[str, VocabSpec] = {
             label_attr="label",
             accepts_proposals=True,
             fields=[
-                VocabField("label", "Label", "text", required=True),
+                VocabField(
+                    "label", "Label", "text", required=True,
+                    hint="For example 'Members of the public' or 'Employees'",
+                ),
                 VocabField(
                     "le_classification",
-                    "LE classification",
+                    "Law enforcement classification",
                     "enum",
                     required=True,
                     enum_cls=LEClassification,
                     default=LEClassification.NONE.value,
+                    hint="Law enforcement processing only. Leave as None for everyone else",
                 ),
             ],
         ),
@@ -104,8 +109,14 @@ VOCABULARIES: dict[str, VocabSpec] = {
             accepts_proposals=True,
             fields=[
                 VocabField("label", "Label", "text", required=True),
-                VocabField("is_special_category", "Special category", "bool"),
-                VocabField("is_criminal_offence", "Criminal offence", "bool"),
+                VocabField(
+                    "is_special_category", "Special category", "bool",
+                    hint="Tick for data such as health, ethnicity or religion (UK GDPR Art 9)",
+                ),
+                VocabField(
+                    "is_criminal_offence", "Criminal offence", "bool",
+                    hint="Tick for data about offences, convictions or cautions (UK GDPR Art 10)",
+                ),
             ],
         ),
         VocabSpec(
@@ -118,7 +129,8 @@ VOCABULARIES: dict[str, VocabSpec] = {
                 VocabField("label", "Label", "text", required=True),
                 VocabField("type", "Type", "enum", required=True, enum_cls=RecipientType),
                 VocabField(
-                    "legal_entity_id", "Legal entity", "fk", fk_model=LegalEntity
+                    "legal_entity_id", "Legal entity", "fk", fk_model=LegalEntity,
+                    hint="The organisation this recipient belongs to, if it is listed",
                 ),
             ],
         ),
@@ -131,7 +143,11 @@ VOCABULARIES: dict[str, VocabSpec] = {
             fields=[
                 VocabField("label", "Label", "text", required=True),
                 VocabField(
-                    "category", "Category", "enum", required=True, enum_cls=SecurityMeasureCategory
+                    "category", "Category", "enum", required=True, enum_cls=SecurityMeasureCategory,
+                    hint=(
+                        "Technical (for example encryption), organisational (for example "
+                        "training) or physical (for example locks)"
+                    ),
                 ),
             ],
         ),
@@ -143,10 +159,19 @@ VOCABULARIES: dict[str, VocabSpec] = {
             accepts_proposals=True,
             fields=[
                 VocabField("label", "Label", "text", required=True),
-                VocabField("period", "Period", "text", required=True),
-                VocabField("trigger", "Trigger", "text", required=True),
-                VocabField("legal_driver", "Legal driver", "textarea"),
-                VocabField("disposal_method", "Disposal method", "text"),
+                VocabField("period", "Period", "text", required=True, hint="For example '6 years'"),
+                VocabField(
+                    "trigger", "Trigger", "text", required=True,
+                    hint="What starts the clock, for example 'End of employment'",
+                ),
+                VocabField(
+                    "legal_driver", "Legal driver", "textarea",
+                    hint="The law or policy that sets this period, if there is one",
+                ),
+                VocabField(
+                    "disposal_method", "Disposal method", "text",
+                    hint="For example 'Secure shredding' or 'Deleted from the system'",
+                ),
             ],
         ),
         VocabSpec(
@@ -158,11 +183,21 @@ VOCABULARIES: dict[str, VocabSpec] = {
             fields=[
                 VocabField("label", "Label", "text", required=True),
                 VocabField(
-                    "role_type", "Role type", "enum", required=True, enum_cls=LegalEntityRoleType
+                    "role_type", "Role type", "enum", required=True, enum_cls=LegalEntityRoleType,
+                    hint=(
+                        "How this organisation relates to us, for example processor or partner "
+                        "agency"
+                    ),
                 ),
-                VocabField("contact", "Contact", "text"),
+                VocabField(
+                    "contact", "Contact", "text",
+                    hint="A name, role and email or phone number",
+                ),
                 VocabField("address", "Address", "textarea"),
-                VocabField("country", "Country", "text"),
+                VocabField(
+                    "country", "Country", "text",
+                    hint="Where the organisation is based",
+                ),
             ],
         ),
         VocabSpec(
@@ -179,8 +214,17 @@ VOCABULARIES: dict[str, VocabSpec] = {
                     "fk",
                     fk_model=LegalEntity,
                 ),
-                VocabField("supplier_role", "Supplier role", "enum", enum_cls=SupplierRole),
-                VocabField("agreement_ref", "Agreement reference", "text"),
+                VocabField(
+                    "supplier_role", "Supplier role", "enum", enum_cls=SupplierRole,
+                    hint=(
+                        "Whether the supplier acts on our instructions (processor) or decides "
+                        "for itself (separate controller)"
+                    ),
+                ),
+                VocabField(
+                    "agreement_ref", "Agreement reference", "text",
+                    hint="The contract or data-sharing agreement number, if there is one",
+                ),
                 VocabField(
                     "special_category",
                     "Special category",
@@ -188,8 +232,18 @@ VOCABULARIES: dict[str, VocabSpec] = {
                     required=True,
                     enum_cls=SourceSpecialCategory,
                     default=SourceSpecialCategory.NONE.value,
+                    hint=(
+                        "Does the source supply special category data directly, or can it be "
+                        "inferred from the data?"
+                    ),
                 ),
-                VocabField("art14_relationship", "Art 14 relationship", "textarea"),
+                VocabField(
+                    "art14_relationship", "Art 14 relationship", "textarea",
+                    hint=(
+                        "How the people concerned are told we hold their data when we did not "
+                        "collect it from them (UK GDPR Art 14)"
+                    ),
+                ),
             ],
         ),
         VocabSpec(
@@ -205,6 +259,10 @@ VOCABULARIES: dict[str, VocabSpec] = {
                     "enum",
                     required=True,
                     enum_cls=AdequacyStatus,
+                    hint=(
+                        "Whether the UK recognises this country as providing adequate data "
+                        "protection"
+                    ),
                 ),
             ],
         ),
@@ -214,7 +272,10 @@ VOCABULARIES: dict[str, VocabSpec] = {
             display_name="Transfer mechanism",
             label_attr="label",
             fields=[
-                VocabField("code", "Code", "text", required=True),
+                VocabField(
+                    "code", "Code", "text", required=True,
+                    hint="A short reference, for example 'IDTA'",
+                ),
                 VocabField("label", "Label", "text", required=True),
             ],
         ),
@@ -284,10 +345,19 @@ VOCABULARIES: dict[str, VocabSpec] = {
             display_name="Privacy notice",
             label_attr="notice_version",
             fields=[
-                VocabField("notice_version", "Notice version", "text", required=True),
+                VocabField(
+                    "notice_version", "Notice version", "text", required=True,
+                    hint="For example 'Staff privacy notice v3'",
+                ),
                 VocabField("publish_date", "Publish date", "date", required=True),
-                VocabField("covers_art13", "Covers Art 13", "bool"),
-                VocabField("covers_art14", "Covers Art 14", "bool"),
+                VocabField(
+                    "covers_art13", "Covers Art 13", "bool",
+                    hint="Tick if it tells people what we do with data we collect from them",
+                ),
+                VocabField(
+                    "covers_art14", "Covers Art 14", "bool",
+                    hint="Tick if it tells people what we do with data we get from someone else",
+                ),
             ],
         ),
         VocabSpec(
@@ -297,9 +367,24 @@ VOCABULARIES: dict[str, VocabSpec] = {
             label_attr="title",
             fields=[
                 VocabField("title", "Title", "text", required=True),
-                VocabField("scope", "Scope", "enum", required=True, enum_cls=APDScope),
-                VocabField("document_ref", "Document reference", "text", required=True),
-                VocabField("retain_until", "Retain until", "date", required=True),
+                VocabField(
+                    "scope", "Scope", "enum", required=True, enum_cls=APDScope,
+                    hint=(
+                        "Whether the document supports general processing (Schedule 1) or law "
+                        "enforcement processing (s42)"
+                    ),
+                ),
+                VocabField(
+                    "document_ref", "Document reference", "text", required=True,
+                    hint="Where the document is held, for example a policy number or link",
+                ),
+                VocabField(
+                    "retain_until", "Retain until", "date", required=True,
+                    hint=(
+                        "The document must be kept until 6 months after the processing it "
+                        "covers ends (DPA 2018 Sch 1 para 40)"
+                    ),
+                ),
             ],
         ),
     ]
@@ -307,7 +392,7 @@ VOCABULARIES: dict[str, VocabSpec] = {
 
 
 def _enum_option_label(member) -> str:
-    return member.value.replace("_", " ").capitalize()
+    return member.value.replace("_", " ").capitalize().replace("Dpo", "DPO")
 
 
 def _get_spec(key: str) -> VocabSpec:
@@ -455,6 +540,7 @@ def _field_rows(session: Session, spec: VocabSpec, values: dict, error_map: dict
         row = {
             "name": f.name,
             "label": f.label,
+            "hint": f.hint,
             "kind": f.kind,
             "value": values[f.name],
             "error": error_map.get(f.name),

@@ -11,25 +11,25 @@
 
   {% for field in field_rows %}
     {% if field.kind == "bool" %}
-      {{ checkbox(field.name, field.label, checked=field.value) }}
+      {{ checkbox(field.name, field.label, checked=field.value, hint=field.hint) }}
     {% elif field.kind == "textarea" %}
-      {{ textarea(field.name, field.label, field.value, error=field.error) }}
+      {{ textarea(field.name, field.label, field.value, hint=field.hint, error=field.error) }}
     {% elif field.kind in ("enum", "fk") %}
-      {{ select(field.name, field.label, field.options, selected=field.value) }}
+      {{ select(field.name, field.label, field.options, selected=field.value, hint=field.hint) }}
       {% if field.error %}<p class="govuk-error-message">{{ field.error }}</p>{% endif %}
     {% elif field.kind == "date" %}
-      {{ date_input(field.name, field.label, field.value, error=field.error) }}
+      {{ date_input(field.name, field.label, field.value, hint=field.hint, error=field.error) }}
     {% else %}
-      {{ text_input(field.name, field.label, field.value, error=field.error) }}
+      {{ text_input(field.name, field.label, field.value, hint=field.hint, error=field.error) }}
     {% endif %}
     {% if field.name == "custodian" %}
-      {{ checkboxes("business_functions", "Business functions", business_function_options, checked=business_functions) }}
+      {{ checkboxes("business_functions", "Business functions", business_function_options, checked=business_functions, hint="Tick every team that uses this asset") }}
       {% if business_functions_error %}<p class="govuk-error-message">{{ business_functions_error }}</p>{% endif %}
     {% endif %}
   {% endfor %}
 
   {% if is_edit %}
-  {{ textarea("change_note", "Change note", "", hint="Optional reason for this change") }}
+  {{ textarea("change_note", "Change note", "", hint="Say why you are making this change (optional)") }}
   {% endif %}
 
   <button type="submit" class="govuk-button" data-module="govuk-button">{{ "Save changes" if is_edit else "Create asset" }}</button>

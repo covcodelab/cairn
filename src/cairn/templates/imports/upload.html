@@ -4,7 +4,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <h1 class="govuk-heading-l">Import questionnaire</h1>
-    <p class="govuk-body">Bulk or offline capture: upload a mapped CSV and each row becomes a draft processing activity, owned by you. You'll see a preview with any row errors before anything is created. For normal departmental capture, use the <a class="govuk-link" href="/intake">intake wizard</a> instead. To bulk-load the asset register rather than activities, use <a class="govuk-link" href="/imports/assets/new">import information assets</a>.</p>
+    <p class="govuk-body">Bulk or offline capture: upload a mapped CSV and each row becomes a draft processing activity, with you as the owner. You'll see a preview with any row errors before anything is created. For normal departmental capture, use the <a class="govuk-link" href="/intake">intake wizard</a> instead. To bulk-load the asset register rather than activities, use <a class="govuk-link" href="/imports/assets/new">import information assets</a>.</p>
 
     {% if error %}
     <div class="govuk-error-summary" data-module="govuk-error-summary">
@@ -34,14 +34,14 @@
         </tr>
       </thead>
       <tbody class="govuk-table__body">
-        <tr class="govuk-table__row"><td class="govuk-table__cell">name</td><td class="govuk-table__cell">Yes</td><td class="govuk-table__cell">Activity name</td></tr>
-        <tr class="govuk-table__row"><td class="govuk-table__cell">business_function</td><td class="govuk-table__cell">Yes</td><td class="govuk-table__cell">Must exactly match an existing business function (case-insensitive). Never proposed.</td></tr>
-        <tr class="govuk-table__row"><td class="govuk-table__cell">purpose</td><td class="govuk-table__cell">Yes</td><td class="govuk-table__cell">Purpose of processing</td></tr>
-        <tr class="govuk-table__row"><td class="govuk-table__cell">description</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">Free text</td></tr>
-        <tr class="govuk-table__row"><td class="govuk-table__cell">activity_domain</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">Matches an activity domain value; blank defaults to "other"</td></tr>
-        <tr class="govuk-table__row"><td class="govuk-table__cell">personal_data_source</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">Semicolon-separated (from_data_subject; from_third_party; public_source); blank is importable but flagged as a warning</td></tr>
-        <tr class="govuk-table__row"><td class="govuk-table__cell">data_subjects / data_categories / recipients / systems</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">Semicolon-separated names. Unmatched names become vocabulary proposals for a curator to approve.</td></tr>
-        <tr class="govuk-table__row"><td class="govuk-table__cell">next_review_at</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">ISO date; blank defaults to one year from today</td></tr>
+        <tr class="govuk-table__row"><td class="govuk-table__cell">name</td><td class="govuk-table__cell">Yes</td><td class="govuk-table__cell">The name of the activity</td></tr>
+        <tr class="govuk-table__row"><td class="govuk-table__cell">business_function</td><td class="govuk-table__cell">Yes</td><td class="govuk-table__cell">Must match an existing business function (ignoring case). Never proposed as a new value</td></tr>
+        <tr class="govuk-table__row"><td class="govuk-table__cell">purpose</td><td class="govuk-table__cell">Yes</td><td class="govuk-table__cell">Why you use the personal data</td></tr>
+        <tr class="govuk-table__row"><td class="govuk-table__cell">description</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">What the activity involves</td></tr>
+        <tr class="govuk-table__row"><td class="govuk-table__cell">activity_domain</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">Must match an activity domain value. If blank, it is set to "other"</td></tr>
+        <tr class="govuk-table__row"><td class="govuk-table__cell">personal_data_source</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">Separate with semicolons: from_data_subject; from_third_party; public_source. You can leave it blank, but the row gets a warning</td></tr>
+        <tr class="govuk-table__row"><td class="govuk-table__cell">data_subjects / data_categories / recipients / systems</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">Separate names with semicolons. A name that matches nothing is proposed as a new value for a curator to approve. A new system is proposed as an information asset</td></tr>
+        <tr class="govuk-table__row"><td class="govuk-table__cell">next_review_at</td><td class="govuk-table__cell">No</td><td class="govuk-table__cell">Date in YYYY-MM-DD format. If blank, it is set to one year from today</td></tr>
       </tbody>
     </table>
   </div>

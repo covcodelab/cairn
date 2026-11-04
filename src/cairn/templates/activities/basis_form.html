@@ -10,38 +10,38 @@
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
   {% if scope == "part2" %}
-  {{ select("art6_basis_id", "Art 6 basis", art6_options, selected=values.art6_basis_id, hint=("Public task (e) is the natural basis for a statutory task; legitimate interests ((f)/(ea)) will be flagged for DPO review." if guard_hint else None)) }}
+  {{ select("art6_basis_id", "Lawful basis (Art 6)", art6_options, selected=values.art6_basis_id, hint=("Public task (e) is usually right for statutory work. A public authority cannot use legitimate interests (f) or recognised legitimate interest (ea) for its official tasks. If you choose either, the DPO will check the processing is outside its official tasks." if guard_hint else "Choose the main reason the law allows this processing (UK GDPR Art 6)")) }}
   {% if error_map.get("art6_basis_id") %}<p class="govuk-error-message">{{ error_map.get("art6_basis_id") }}</p>{% endif %}
 
-  {{ textarea("art6_justification", "Art 6 justification", values.art6_justification, error=error_map.get("art6_justification")) }}
+  {{ textarea("art6_justification", "Why this basis applies", values.art6_justification, hint="Required when you choose an Art 6 basis. Explain why this basis fits this activity's purpose (UK GDPR Art 6)", error=error_map.get("art6_justification")) }}
 
   {% if show_art9 %}
-  {{ select("art9_condition_id", "Art 9 condition", art9_options, selected=values.art9_condition_id, hint="Required for special-category data.") }}
+  {{ select("art9_condition_id", "Special category condition (Art 9)", art9_options, selected=values.art9_condition_id, hint="Required because this activity uses special category data, such as health or ethnicity data") }}
   {% if error_map.get("art9_condition_id") %}<p class="govuk-error-message">{{ error_map.get("art9_condition_id") }}</p>{% endif %}
   {% endif %}
 
-  {{ select("schedule1_condition_id", "Schedule 1 condition", schedule1_options, selected=values.schedule1_condition_id) }}
+  {{ select("schedule1_condition_id", "Schedule 1 condition", schedule1_options, selected=values.schedule1_condition_id, hint="Needed when the Art 9 condition relies on UK law (DPA 2018 Schedule 1)") }}
   {% if error_map.get("schedule1_condition_id") %}<p class="govuk-error-message">{{ error_map.get("schedule1_condition_id") }}</p>{% endif %}
 
   {% if show_art10 %}
-  {{ text_input("art10_basis", "Art 10 basis", values.art10_basis, hint="Required for criminal-offence data.") }}
+  {{ text_input("art10_basis", "Criminal offence data basis (Art 10)", values.art10_basis, hint="Required because this activity uses criminal offence data. State the legal authority, for example a Schedule 1 condition") }}
   {% endif %}
 
-  {{ select("apd_id", "Appropriate Policy Document", apd_options, selected=values.apd_id) }}
+  {{ select("apd_id", "Appropriate policy document", apd_options, selected=values.apd_id, hint="The policy that explains how you protect this data. Needed for some Schedule 1 conditions") }}
   {% if error_map.get("apd_id") %}<p class="govuk-error-message">{{ error_map.get("apd_id") }}</p>{% endif %}
 
   {% else %}
-  {{ select("s35_basis_id", "s35 basis", s35_options, selected=values.s35_basis_id) }}
+  {{ select("s35_basis_id", "Lawful basis (s35)", s35_options, selected=values.s35_basis_id, hint="The reason the law allows this law enforcement processing (DPA 2018 s35)") }}
   {% if error_map.get("s35_basis_id") %}<p class="govuk-error-message">{{ error_map.get("s35_basis_id") }}</p>{% endif %}
 
-  {{ select("schedule8_condition_id", "Schedule 8 condition", schedule8_options, selected=values.schedule8_condition_id) }}
+  {{ select("schedule8_condition_id", "Schedule 8 condition", schedule8_options, selected=values.schedule8_condition_id, hint="Needed for sensitive processing (DPA 2018 Schedule 8)") }}
   {% if error_map.get("schedule8_condition_id") %}<p class="govuk-error-message">{{ error_map.get("schedule8_condition_id") }}</p>{% endif %}
 
-  {{ select("apd_id", "Appropriate Policy Document", apd_options, selected=values.apd_id) }}
+  {{ select("apd_id", "Appropriate policy document", apd_options, selected=values.apd_id, hint="Needed for sensitive processing (DPA 2018 s42)") }}
   {% if error_map.get("apd_id") %}<p class="govuk-error-message">{{ error_map.get("apd_id") }}</p>{% endif %}
   {% endif %}
 
-  {{ textarea("change_note", "Change note", "", hint="Optional reason for this change") }}
+  {{ textarea("change_note", "Change note", "", hint="Say why you are making this change (optional)") }}
 
   <button type="submit" class="govuk-button" data-module="govuk-button">Save</button>
 </form>

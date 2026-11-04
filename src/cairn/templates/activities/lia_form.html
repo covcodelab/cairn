@@ -1,26 +1,26 @@
 {% extends "base.html" %}
 {% from "macros.html" import error_summary, select, textarea, date_input %}
-{% block title %}{{ "Edit" if is_edit else "Add" }} LIA/RLI record{% endblock %}
+{% block title %}{{ "Edit" if is_edit else "Add" }} legitimate interests assessment{% endblock %}
 {% block content %}
-<h1 class="govuk-heading-l">{{ "Edit" if is_edit else "Add" }} LIA/RLI record</h1>
+<h1 class="govuk-heading-l">{{ "Edit" if is_edit else "Add" }} legitimate interests assessment</h1>
 
 {{ error_summary(errors) }}
 
 <form method="post" action="/activities/{{ activity.id }}/basis/part2/lia/{{ (lia_id ~ '/edit') if is_edit else 'new' }}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
-  {{ textarea("interest_identified", "Interest identified", values.interest_identified, error=error_map.get("interest_identified")) }}
-  {{ select("rli_condition", "Recognised interest (Annex 1)", rli_options, selected=values.rli_condition, hint="Required for (ea) recognised legitimate interest: the Annex 1 purpose relied on") }}
+  {{ textarea("interest_identified", "The interest you are relying on", values.interest_identified, hint="Describe the legitimate interest, for example 'Preventing fraud against the service'", error=error_map.get("interest_identified")) }}
+  {{ select("rli_condition", "Recognised interest (Annex 1)", rli_options, selected=values.rli_condition, hint="Required if the basis is recognised legitimate interest (ea). Choose the one that applies") }}
   {% if error_map.get("rli_condition") %}<p class="govuk-error-message">{{ error_map.get("rli_condition") }}</p>{% endif %}
-  {{ textarea("necessity_test", "Necessity test", values.necessity_test, error=error_map.get("necessity_test")) }}
-  {{ textarea("balancing_test", "Balancing test", values.balancing_test, hint="Required for (f) legitimate interests; not required for (ea) recognised legitimate interests") }}
-  {{ textarea("safeguards", "Safeguards", values.safeguards) }}
-  {{ select("decision", "Decision", decision_options, selected=values.decision) }}
+  {{ textarea("necessity_test", "Why the processing is necessary", values.necessity_test, hint="Explain why you cannot achieve this in a less intrusive way", error=error_map.get("necessity_test")) }}
+  {{ textarea("balancing_test", "Balancing test", values.balancing_test, hint="Required if the basis is legitimate interests (f). Weigh your interest against the impact on people. Not needed for (ea)") }}
+  {{ textarea("safeguards", "Safeguards", values.safeguards, hint="What you do to reduce the impact on people") }}
+  {{ select("decision", "Decision", decision_options, selected=values.decision, hint="Whether the processing can go ahead") }}
   {% if error_map.get("decision") %}<p class="govuk-error-message">{{ error_map.get("decision") }}</p>{% endif %}
   {{ date_input("decision_date", "Decision date", values.decision_date, error=error_map.get("decision_date")) }}
 
   {% if is_edit %}
-  {{ textarea("change_note", "Change note", "", hint="Optional reason for this change") }}
+  {{ textarea("change_note", "Change note", "", hint="Say why you are making this change (optional)") }}
   {% endif %}
 
   <button type="submit" class="govuk-button" data-module="govuk-button">Save</button>

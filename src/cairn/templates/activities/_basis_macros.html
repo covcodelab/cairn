@@ -2,15 +2,15 @@
 <dl class="govuk-summary-list">
   {% if view.scope == "part2" %}
   <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">Art 6 basis</dt>
+    <dt class="govuk-summary-list__key">Lawful basis (Art 6)</dt>
     <dd class="govuk-summary-list__value">{{ view.art6 }}</dd>
   </div>
   <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">Art 6 justification</dt>
+    <dt class="govuk-summary-list__key">Why this basis applies</dt>
     <dd class="govuk-summary-list__value">{{ view.art6_justification }}</dd>
   </div>
   <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">Art 9 condition</dt>
+    <dt class="govuk-summary-list__key">Special category condition (Art 9)</dt>
     <dd class="govuk-summary-list__value">{{ view.art9 }}</dd>
   </div>
   <div class="govuk-summary-list__row">
@@ -18,12 +18,12 @@
     <dd class="govuk-summary-list__value">{{ view.schedule1 }}</dd>
   </div>
   <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">Art 10 basis</dt>
+    <dt class="govuk-summary-list__key">Criminal offence data basis (Art 10)</dt>
     <dd class="govuk-summary-list__value">{{ view.art10 }}</dd>
   </div>
   {% else %}
   <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">s35 basis</dt>
+    <dt class="govuk-summary-list__key">Lawful basis (s35)</dt>
     <dd class="govuk-summary-list__value">{{ view.s35 }}</dd>
   </div>
   <div class="govuk-summary-list__row">
@@ -32,7 +32,7 @@
   </div>
   {% endif %}
   <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">Appropriate Policy Document</dt>
+    <dt class="govuk-summary-list__key">Appropriate policy document</dt>
     <dd class="govuk-summary-list__value">{{ view.apd }}</dd>
   </div>
 </dl>

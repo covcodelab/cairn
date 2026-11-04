@@ -206,7 +206,7 @@ def test_guard_preselects_public_task_with_hint(activities_client, activities_we
     form = activities_client.get(f"/activities/{activity_id}/basis/part2/edit")
     assert form.status_code == 200
     assert f'value="{e_id}" selected' in form.text
-    assert "flagged for DPO review" in form.text
+    assert "the DPO will check" in form.text
 
 
 def test_consent_flow_appears_and_clears_rule6(activities_client, activities_web_engine):
@@ -264,7 +264,7 @@ def test_lia_flow_appears_and_clears_rule5(activities_client, activities_web_eng
     )
 
     detail = activities_client.get(f"/activities/{activity_id}")
-    assert "LIA / RLI records" in detail.text
+    assert "Legitimate interests assessments" in detail.text
     assert any(f.rule_id == "5" for f in _findings_for(activities_web_engine, activity_id))
 
     lia_form = activities_client.get(f"/activities/{activity_id}/basis/part2/lia/new")

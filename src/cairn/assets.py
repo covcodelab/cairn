@@ -48,30 +48,65 @@ class AssetField:
     enum_cls: type | None = None
     fk_model: type | None = None
     fk_label_attr: str = "label"
+    hint: str | None = None
 
 
 ASSET_FIELDS: list[AssetField] = [
-    AssetField("label", "Label", "text", required=True),
-    AssetField("asset_type", "Asset type", "enum", required=True, enum_cls=AssetType),
-    AssetField("description", "Description", "textarea"),
     AssetField(
-        "iao_user_id", "Information Asset Owner", "fk", fk_model=User, fk_label_attr="display_name"
+        "label", "Label", "text", required=True,
+        hint="The name people use, for example 'HR system' or 'Station log books'",
     ),
-    AssetField("custodian", "Custodian", "text"),
+    AssetField("asset_type", "Asset type", "enum", required=True, enum_cls=AssetType),
     AssetField(
-        "classification", "Classification", "enum", required=True, enum_cls=SecurityClassification
+        "description", "Description", "textarea",
+        hint="What it is and what information it holds",
+    ),
+    AssetField(
+        "iao_user_id", "Information Asset Owner", "fk", fk_model=User,
+        fk_label_attr="display_name",
+        hint="The senior person accountable for this asset",
+    ),
+    AssetField(
+        "custodian", "Custodian", "text",
+        hint="Who looks after it day to day, for example 'IT service desk'",
+    ),
+    AssetField(
+        "classification", "Classification", "enum", required=True, enum_cls=SecurityClassification,
+        hint="The government security classification of the information",
     ),
     AssetField("contains_personal_data", "Contains personal data", "bool"),
     AssetField("status", "Status", "enum", required=True, enum_cls=AssetStatus),
-    AssetField("next_review_date", "Next review date", "date"),
     AssetField(
-        "supplier_entity_id", "Supplier / hosting provider", "fk", fk_model=LegalEntity
+        "next_review_date", "Next review date", "date",
+        hint="When the entry for this asset should next be checked",
     ),
-    AssetField("owner", "Owner (legacy)", "text"),
-    AssetField("location", "Location", "text"),
-    AssetField("hosting_country", "Hosting country", "text"),
-    AssetField("default_retention_id", "Default retention rule", "fk", fk_model=RetentionRule),
-    AssetField("s62_logging_in_scope", "s62 logging in scope", "bool"),
+    AssetField(
+        "supplier_entity_id", "Supplier / hosting provider", "fk", fk_model=LegalEntity,
+        hint="If the supplier is missing, ask a curator to add it",
+    ),
+    AssetField(
+        "owner", "Owner (legacy)", "text",
+        hint="Kept from an older record. Use Information Asset Owner for new entries",
+    ),
+    AssetField(
+        "location", "Location", "text",
+        hint="For example 'Server room' or 'Station 4 office'",
+    ),
+    AssetField(
+        "hosting_country", "Hosting country", "text",
+        hint="Where the data is stored, if it is a hosted service",
+    ),
+    AssetField(
+        "default_retention_id", "Default retention rule", "fk", fk_model=RetentionRule,
+        hint="How long information in this asset is usually kept",
+    ),
+    AssetField(
+        "s62_logging_in_scope", "s62 logging in scope", "bool",
+        hint=(
+            "Law enforcement processing only. Tick if the asset must log who "
+            "accessed or disclosed records (DPA 2018 s62)"
+        ),
+    ),
     AssetField("notes", "Notes", "textarea"),
 ]
 
@@ -274,6 +309,7 @@ def _field_rows(session: Session, values: dict, error_map: dict) -> list[dict]:
         row = {
             "name": f.name,
             "label": f.label,
+            "hint": f.hint,
             "kind": f.kind,
             "value": values[f.name],
             "error": error_map.get(f.name),

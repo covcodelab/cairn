@@ -64,12 +64,13 @@
 {% endif %}
 
 {% if show_lia %}
-<h3 class="govuk-heading-s">LIA / RLI records</h3>
+<h3 class="govuk-heading-s">Legitimate interests assessments</h3>
+<p class="govuk-body">Record the assessment when the basis is legitimate interests (f) or recognised legitimate interest (ea).</p>
 <table class="govuk-table">
   <thead class="govuk-table__head">
     <tr class="govuk-table__row">
       <th scope="col" class="govuk-table__header">Interest identified</th>
-      <th scope="col" class="govuk-table__header">Balancing test</th>
+      <th scope="col" class="govuk-table__header">Balancing test done</th>
       <th scope="col" class="govuk-table__header">Decision</th>
       <th scope="col" class="govuk-table__header">Decision date</th>
       <th scope="col" class="govuk-table__header"></th>
@@ -87,11 +88,11 @@
       </td>
     </tr>
     {% else %}
-    <tr class="govuk-table__row"><td class="govuk-table__cell" colspan="5">No LIA/RLI records.</td></tr>
+    <tr class="govuk-table__row"><td class="govuk-table__cell" colspan="5">No legitimate interests assessments recorded.</td></tr>
     {% endfor %}
   </tbody>
 </table>
 {% if can_author_basis %}
-<p class="govuk-body"><a class="govuk-link" href="/activities/{{ activity.id }}/basis/part2/lia/new">Add LIA/RLI record</a></p>
+<p class="govuk-body"><a class="govuk-link" href="/activities/{{ activity.id }}/basis/part2/lia/new">Add legitimate interests assessment</a></p>
 {% endif %}
 {% endif %}

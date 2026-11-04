@@ -9,16 +9,16 @@
 <form method="post" action="/activities/{{ activity.id }}/transfers/{{ (transfer_id ~ '/edit') if is_edit else 'new' }}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
-  {{ select("recipient_id", "Recipient", recipient_options, selected=values.recipient_id) }}
+  {{ select("recipient_id", "Recipient", recipient_options, selected=values.recipient_id, hint="Who receives the data outside the UK") }}
   {% if error_map.get("recipient_id") %}<p class="govuk-error-message">{{ error_map.get("recipient_id") }}</p>{% endif %}
-  {{ select("third_country_id", "Third country", third_country_options, selected=values.third_country_id) }}
+  {{ select("third_country_id", "Country the data goes to", third_country_options, selected=values.third_country_id, hint="Any country outside the UK") }}
   {% if error_map.get("third_country_id") %}<p class="govuk-error-message">{{ error_map.get("third_country_id") }}</p>{% endif %}
-  {{ select("mechanism_id", "Transfer mechanism", mechanism_options, selected=values.mechanism_id) }}
+  {{ select("mechanism_id", "Transfer mechanism", mechanism_options, selected=values.mechanism_id, hint="The legal safeguard that allows the transfer, for example adequacy regulations or an international data transfer agreement (IDTA)") }}
   {% if error_map.get("mechanism_id") %}<p class="govuk-error-message">{{ error_map.get("mechanism_id") }}</p>{% endif %}
-  {{ textarea("data_protection_test", "Data protection test", values.data_protection_test, hint="The 'not materially lower' test (DUAA s85) — required for appropriate-safeguards mechanisms (IDTA, UK Addendum, BCR).") }}
+  {{ textarea("data_protection_test", "Data protection test", values.data_protection_test, hint="Explain why the protection abroad is not materially lower than in the UK. Required for IDTA, UK Addendum and binding corporate rules (UK GDPR Art 46)") }}
 
   {% if is_edit %}
-  {{ textarea("change_note", "Change note", "", hint="Optional reason for this change") }}
+  {{ textarea("change_note", "Change note", "", hint="Say why you are making this change (optional)") }}
   {% endif %}
 
   <button type="submit" class="govuk-button" data-module="govuk-button">Save</button>
