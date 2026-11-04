@@ -37,17 +37,23 @@
 {% if retention_rule_options %}
 <form method="post" action="/activities/{{ activity.id }}/retention">
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-  <select class="govuk-select" name="retention_rule_id">
-    {% for value, text in retention_rule_options %}
-    <option value="{{ value }}">{{ text }}</option>
-    {% endfor %}
-  </select>
-  <select class="govuk-select" name="data_category_scope_id">
-    <option value="">All linked categories</option>
-    {% for value, text in retention_scope_options %}
-    <option value="{{ value }}">{{ text }}</option>
-    {% endfor %}
-  </select>
+  <div class="govuk-form-group">
+    <label class="govuk-label" for="retention-retention_rule_id">Retention rule to add</label>
+    <select class="govuk-select" id="retention-retention_rule_id" name="retention_rule_id">
+      {% for value, text in retention_rule_options %}
+      <option value="{{ value }}">{{ text }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="govuk-form-group">
+    <label class="govuk-label" for="retention-data_category_scope_id">Applies to</label>
+    <select class="govuk-select" id="retention-data_category_scope_id" name="data_category_scope_id">
+      <option value="">All linked categories</option>
+      {% for value, text in retention_scope_options %}
+      <option value="{{ value }}">{{ text }}</option>
+      {% endfor %}
+    </select>
+  </div>
   <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button">Add retention rule</button>
 </form>
 {% endif %}

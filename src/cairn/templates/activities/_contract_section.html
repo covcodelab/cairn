@@ -36,11 +36,14 @@
 {% if contract_link_options %}
 <form method="post" action="/activities/{{ activity.id }}/contracts/link">
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-  <select class="govuk-select" name="contract_id">
-    {% for value, text in contract_link_options %}
-    <option value="{{ value }}">{{ text }}</option>
-    {% endfor %}
-  </select>
+  <div class="govuk-form-group">
+    <label class="govuk-label" for="contracts-contract_id">Contract to add</label>
+    <select class="govuk-select" id="contracts-contract_id" name="contract_id">
+      {% for value, text in contract_link_options %}
+      <option value="{{ value }}">{{ text }}</option>
+      {% endfor %}
+    </select>
+  </div>
   <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button">Link existing contract</button>
 </form>
 {% endif %}

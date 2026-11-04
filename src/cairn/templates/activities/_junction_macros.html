@@ -1,4 +1,4 @@
-{% macro simple_junction_section(kind, section_title, items, options, activity_id, csrf_token) %}
+{% macro simple_junction_section(kind, section_title, items, options, activity_id, csrf_token, label) %}
 <div id="{{ kind }}-section">
   <h3 class="govuk-heading-s">{{ section_title }}</h3>
   <table class="govuk-table">
@@ -21,11 +21,14 @@
   {% if options %}
   <form method="post" action="/activities/{{ activity_id }}/{{ kind }}" hx-post="/activities/{{ activity_id }}/{{ kind }}" hx-target="#{{ kind }}-section" hx-swap="outerHTML">
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-    <select class="govuk-select" name="item_id">
-      {% for value, text in options %}
-      <option value="{{ value }}">{{ text }}</option>
-      {% endfor %}
-    </select>
+    <div class="govuk-form-group">
+      <label class="govuk-label" for="{{ kind }}-item_id">{{ label }}</label>
+      <select class="govuk-select" id="{{ kind }}-item_id" name="item_id">
+        {% for value, text in options %}
+        <option value="{{ value }}">{{ text }}</option>
+        {% endfor %}
+      </select>
+    </div>
     <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button">Add</button>
   </form>
   {% endif %}
@@ -63,17 +66,23 @@
   {% if category_options %}
   <form method="post" action="/activities/{{ activity_id }}/data-categories" hx-post="/activities/{{ activity_id }}/data-categories" hx-target="#data-categories-section" hx-swap="outerHTML">
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-    <select class="govuk-select" name="category_id">
-      {% for value, text in category_options %}
-      <option value="{{ value }}">{{ text }}</option>
-      {% endfor %}
-    </select>
-    <select class="govuk-select" name="data_subject_scope_id">
-      <option value="">All linked data subjects</option>
-      {% for value, text in scope_options %}
-      <option value="{{ value }}">{{ text }}</option>
-      {% endfor %}
-    </select>
+    <div class="govuk-form-group">
+      <label class="govuk-label" for="data-categories-category_id">Data category to add</label>
+      <select class="govuk-select" id="data-categories-category_id" name="category_id">
+        {% for value, text in category_options %}
+        <option value="{{ value }}">{{ text }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="govuk-form-group">
+      <label class="govuk-label" for="data-categories-data_subject_scope_id">Applies to</label>
+      <select class="govuk-select" id="data-categories-data_subject_scope_id" name="data_subject_scope_id">
+        <option value="">All linked data subjects</option>
+        {% for value, text in scope_options %}
+        <option value="{{ value }}">{{ text }}</option>
+        {% endfor %}
+      </select>
+    </div>
     <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button">Add</button>
   </form>
   {% endif %}

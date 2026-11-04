@@ -22,11 +22,14 @@
 {% if can_author_registers and consumer_options %}
 <form method="post" action="/activities/{{ activity.id }}/feeds">
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-  <select class="govuk-select" name="consumer_activity_id">
-    {% for value, text in consumer_options %}
-    <option value="{{ value }}">{{ text }}</option>
-    {% endfor %}
-  </select>
+  <div class="govuk-form-group">
+    <label class="govuk-label" for="feeds-consumer_activity_id">Activity this feeds</label>
+    <select class="govuk-select" id="feeds-consumer_activity_id" name="consumer_activity_id">
+      {% for value, text in consumer_options %}
+      <option value="{{ value }}">{{ text }}</option>
+      {% endfor %}
+    </select>
+  </div>
   <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button">Add feed</button>
 </form>
 {% endif %}

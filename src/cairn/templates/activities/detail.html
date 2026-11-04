@@ -112,15 +112,15 @@
 </ul>
 {% endif %}
 
-{{ simple_junction_section("data-subjects", "Data subjects", data_subjects, data_subject_options, activity.id, csrf_token) }}
+{{ simple_junction_section("data-subjects", "Data subjects", data_subjects, data_subject_options, activity.id, csrf_token, add_labels["data-subjects"]) }}
 {{ data_categories_section(data_category_rows, data_category_options, data_subject_scope_options, activity.id, csrf_token) }}
-{{ simple_junction_section("recipients", "Recipients", recipients, recipient_options, activity.id, csrf_token) }}
-{{ simple_junction_section("assets", "Assets", assets, asset_options, activity.id, csrf_token) }}
-{{ simple_junction_section("data-sources", "External data sources", data_sources, data_source_options, activity.id, csrf_token) }}
+{{ simple_junction_section("recipients", "Recipients", recipients, recipient_options, activity.id, csrf_token, add_labels["recipients"]) }}
+{{ simple_junction_section("assets", "Assets", assets, asset_options, activity.id, csrf_token, add_labels["assets"]) }}
+{{ simple_junction_section("data-sources", "External data sources", data_sources, data_source_options, activity.id, csrf_token, add_labels["data-sources"]) }}
 {% if activity.controller_or_processor.value in ("processor", "joint") %}
-{{ simple_junction_section("controllers", "Controllers", controllers, controller_options, activity.id, csrf_token) }}
+{{ simple_junction_section("controllers", "Controllers", controllers, controller_options, activity.id, csrf_token, add_labels["controllers"]) }}
 {% endif %}
-{{ simple_junction_section("privacy-notices", "Privacy notices", privacy_notices, privacy_notice_options, activity.id, csrf_token) }}
+{{ simple_junction_section("privacy-notices", "Privacy notices", privacy_notices, privacy_notice_options, activity.id, csrf_token, add_labels["privacy-notices"]) }}
 
 {% include "activities/_basis_section.html" %}
 
