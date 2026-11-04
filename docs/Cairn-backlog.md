@@ -74,6 +74,7 @@ Test suite 294 passing; CI green throughout. **Remaining work before go-live is 
 30. **Rule 4 could also flag consent (a) for public authorities** for DPO review, alongside (f)/(ea).
 31. **Rights-by-basis view** (erasure / portability / objection) to feed privacy notices.
 32. **Re-check the ADM safeguards (rule 19)** when the final ADM/AI statutory code is published.
+33. **Unlabelled dropdowns on the activity and asset detail pages** *(found 2026-11-04 in the form help-text pass)*. The inline "Add" forms in the junction editors render `<select>` elements with no `<label>`, so a screen reader announces only the first option and sighted users must guess what the list is for. Affected: `activities/_junction_macros.html` (generic junctions, and both the data category and data-subject scope selects), `_feeds_section.html`, `_contract_section.html`, `_retention_section.html`, `_security_section.html` and `assets/detail.html`. Fix: give each a visible GOV.UK label (or a `govuk-visually-hidden` one where space is tight) bound by `for`/`id`, and add a test that every `<select>` in a rendered page has a label. Fails WCAG 2.2 AA 1.3.1 / 3.3.2 / 4.1.2, which the Public Sector Bodies Accessibility Regulations 2018 apply to internal services too — so fix before go-live.
 
 ## 5. Standing assurance items (Phase 3, unchanged but restated)
 
@@ -91,7 +92,7 @@ Test suite 294 passing; CI green throughout. **Remaining work before go-live is 
 | Before staging holds real data | 6 DPIA delta *(1, 3, 4 done 2026-07-17)* · 7 intake-question reseed check *(both question sets — 25 done 2026-07-30)* |
 | At first staging deployment | 5 Entra round-trip verification *(2 done 2026-07-17)* |
 | During pilot (as evidence arrives) | 8–14 |
-| Before go-live | Phase 3 items (§5) · 15 notifications |
+| Before go-live | Phase 3 items (§5) · 15 notifications · 33 unlabelled dropdowns |
 | Post go-live / roadmap | 16–24, 28–32 *(26, 27 done 2026-07-30)* |
 
 ---
