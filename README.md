@@ -2,6 +2,8 @@
 
 Cairn manages a Record of Processing Activities (ROPA) and Information Asset Register to meet UK GDPR Article 30 and DPA 2018 Part 3 (s61) requirements. Each organisation runs its own instance. The Fire & Rescue Service pack is the first sector pack.
 
+![The Set up Cairn screen, shown on first visit: organisation name and type, sector pack, legal entities, data protection regimes, modules, and the first user's account](docs/images/setup-screen.png)
+
 ## Quick start
 
 Requires [uv](https://docs.astral.sh/uv/). Python 3.14 is pinned in `.python-version`.
