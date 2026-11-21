@@ -4,6 +4,8 @@ Cairn manages a Record of Processing Activities (ROPA) and Information Asset Reg
 
 ![The Set up Cairn screen, shown on first visit: organisation name and type, sector pack, legal entities, data protection regimes, modules, and the first user's account](docs/images/setup-screen.png)
 
+![The dashboard as the DPO sees it: items needing attention, register overview by status, regime and business function, DUAA commencement, assurance and export coverage, information assets, complaints, overdue reviews and trials ending soon](docs/images/dashboard.png)
+
 ## Quick start
 
 Requires [uv](https://docs.astral.sh/uv/). Python 3.14 is pinned in `.python-version`.
